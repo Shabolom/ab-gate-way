@@ -1,0 +1,630 @@
+openapi: 3.0.3
+
+info:
+  title: Gateway HTTP API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /v1/auth/register:
+    post:
+      operationId: Register
+      tags: [auth]
+      summary: Register user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthReply'
+
+  /v1/auth/login:
+    post:
+      operationId: Login
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthReply'
+
+  /v1/auth/logout:
+    post:
+      operationId: Logout
+      tags: [auth]
+      summary: Logout user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthReply'
+
+  /v1/auth/refresh:
+    post:
+      operationId: Refresh
+      tags: [auth]
+      summary: Refresh token
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthReply'
+
+  /v1/users:
+    get:
+      operationId: GetUsersList
+      tags: [users]
+      summary: Get users list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUsersReply'
+
+    patch:
+      operationId: UpdateUsers
+      tags: [users]
+      summary: Update current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUsersRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUsersReply'
+
+    delete:
+      operationId: DeleteUsers
+      tags: [users]
+      summary: Delete current user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteUsersReply'
+
+  /v1/users/me:
+    get:
+      operationId: GetUser
+      tags: [users]
+      summary: Get current user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserReply'
+
+  /v1/experiments/user:
+    post:
+      operationId: UserExperiment
+      tags: [experiments]
+      summary: Get user experiments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExperimentRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExperimentsReply'
+
+  /v1/experiments:
+    post:
+      operationId: CreateExperiment
+      tags: [experiments]
+      summary: Create experiment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExperimentRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockReply'
+
+  /v1/namespaces:
+    post:
+      operationId: CreateNamespace
+      tags: [namespaces]
+      summary: Create namespace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNamespaceRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockReply'
+
+  /v1/layers:
+    post:
+      operationId: CreateLayer
+      tags: [layers]
+      summary: Create layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLayerRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockReply'
+
+  /v1/experiments/{experiment_id}/ready:
+    post:
+      operationId: SetReadyExperiment
+      tags: [experiments]
+      summary: Set experiment ready
+      parameters:
+        - name: experiment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockReply'
+
+  /v1/experiments/{experiment_id}/stopped:
+    post:
+      operationId: SetStopedExperiment
+      tags: [experiments]
+      summary: Stop experiment
+      parameters:
+        - name: experiment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockReply'
+
+  /v1/custom-params:
+    post:
+      operationId: CreateCustomParam
+      tags: [custom-params]
+      summary: Create custom parameter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomParamRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockReply'
+
+components:
+  schemas:
+    ErrInfoReason:
+      type: string
+      enum:
+        - UNSPECIFIED
+        - VALIDATION_ERROR
+        - INVALID_REQUEST
+        - STATUS_OK
+
+    StockReply:
+      type: object
+      required:
+        - err_info_reason
+        - message
+      properties:
+        err_info_reason:
+          $ref: '#/components/schemas/ErrInfoReason'
+        message:
+          type: string
+
+    AuthReply:
+      type: object
+      required:
+        - err_info_reason
+        - message
+      properties:
+        err_info_reason:
+          $ref: '#/components/schemas/ErrInfoReason'
+        message:
+          type: string
+
+    RegisterRequest:
+      type: object
+      required:
+        - mail
+        - password
+        - name
+        - age
+      properties:
+        mail:
+          type: string
+          example: test@mail.com
+        password:
+          type: string
+          example: qwerty123
+        name:
+          type: string
+          example: Timur
+        age:
+          type: integer
+          format: int32
+          example: 25
+
+    LoginRequest:
+      type: object
+      required:
+        - mail
+        - password
+      properties:
+        mail:
+          type: string
+          example: test@mail.com
+        password:
+          type: string
+          example: qwerty123
+
+    User:
+      type: object
+      required:
+        - id
+        - mail
+        - name
+        - age
+        - created_at
+        - added_at
+      properties:
+        id:
+          type: string
+        mail:
+          type: string
+        name:
+          type: string
+        age:
+          type: integer
+          format: int32
+        created_at:
+          type: string
+          format: date-time
+        added_at:
+          type: string
+          format: date-time
+
+    GetUsersReply:
+      type: object
+      required:
+        - err_info_reason
+        - users
+      properties:
+        err_info_reason:
+          $ref: '#/components/schemas/ErrInfoReason'
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+
+    GetUserReply:
+      type: object
+      required:
+        - err_info_reason
+        - user
+      properties:
+        err_info_reason:
+          $ref: '#/components/schemas/ErrInfoReason'
+        user:
+          $ref: '#/components/schemas/User'
+
+    DeleteUsersReply:
+      type: object
+      required:
+        - err_info_reason
+        - user
+        - message
+      properties:
+        err_info_reason:
+          $ref: '#/components/schemas/ErrInfoReason'
+        user:
+          $ref: '#/components/schemas/User'
+        message:
+          type: string
+
+    UpdateUsersRequest:
+      type: object
+      required:
+        - updated_user
+      properties:
+        updated_user:
+          $ref: '#/components/schemas/UpdateUser'
+
+    UpdateUser:
+      type: object
+      properties:
+        mail:
+          type: string
+        name:
+          type: string
+        age:
+          type: integer
+          format: int32
+
+    UpdateUsersReply:
+      type: object
+      required:
+        - err_info_reason
+        - user
+        - message
+      properties:
+        err_info_reason:
+          $ref: '#/components/schemas/ErrInfoReason'
+        user:
+          $ref: '#/components/schemas/User'
+        message:
+          type: string
+
+    CreateExperimentRequest:
+      type: object
+      required:
+        - name
+        - rollout_percentage
+        - start_date
+        - end_date
+        - layers_id
+        - groups
+      properties:
+        name:
+          type: string
+          example: test_experiment
+        rollout_percentage:
+          type: integer
+          format: int64
+          example: 50
+        start_date:
+          type: string
+          format: date-time
+          example: "2026-06-16T10:00:00Z"
+        end_date:
+          type: string
+          format: date-time
+          example: "2026-07-16T10:00:00Z"
+        layers_id:
+          type: array
+          items:
+            type: integer
+            format: int64
+        passing_cities:
+          type: array
+          items:
+            type: string
+        excluded_cities:
+          type: array
+          items:
+            type: string
+        passing_stores:
+          type: array
+          items:
+            type: string
+        excluded_stores:
+          type: array
+          items:
+            type: string
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+        custom_param_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomParamGroup'
+
+    CustomParamGroup:
+      type: object
+      required:
+        - percentage
+        - custom_param
+      properties:
+        percentage:
+          type: integer
+          format: int64
+        custom_param:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomParam'
+
+    CustomParam:
+      type: object
+      required:
+        - parametr_id
+        - condition
+        - value
+      properties:
+        parametr_id:
+          type: integer
+          format: int64
+        condition:
+          type: string
+          example: EQUAL
+        value:
+          type: string
+          example: "1.2.3"
+
+    Group:
+      type: object
+      required:
+        - name
+        - rolling_percentage
+      properties:
+        name:
+          type: string
+        rolling_percentage:
+          type: integer
+          format: int64
+        device_id:
+          type: array
+          items:
+            type: integer
+            format: int64
+
+    CreateNamespaceRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    CreateLayerRequest:
+      type: object
+      required:
+        - namespace_id
+        - name
+      properties:
+        namespace_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+
+    CreateCustomParamRequest:
+      type: object
+      required:
+        - name
+        - namespace_id
+        - type
+      properties:
+        name:
+          type: string
+        namespace_id:
+          type: integer
+          format: int64
+        type:
+          type: string
+          example: STRING
+
+    ExperimentRequest:
+      type: object
+      required:
+        - split_id
+        - device_id
+        - namespace
+      properties:
+        split_id:
+          type: integer
+          format: int64
+        device_id:
+          type: integer
+          format: int64
+        namespace:
+          type: string
+        city:
+          type: string
+        store:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/Param'
+
+    Param:
+      type: object
+      required:
+        - param_name
+        - value
+      properties:
+        param_name:
+          type: string
+        value:
+          type: string
+
+    ExperimentsReply:
+      type: object
+      required:
+        - err_info_reason
+        - experiments_reply
+      properties:
+        err_info_reason:
+          $ref: '#/components/schemas/ErrInfoReason'
+        experiments_reply:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExperimentReply'
+
+    ExperimentReply:
+      type: object
+      required:
+        - experiment_name
+        - group_name
+      properties:
+        experiment_name:
+          type: string
+        group_name:
+          type: string
