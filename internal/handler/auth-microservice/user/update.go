@@ -1,4 +1,4 @@
-package userHandler
+package user
 
 import (
 	userDto "gate-way/internal/dto/auth-microservice-dto"
