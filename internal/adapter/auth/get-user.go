@@ -3,22 +3,13 @@ package authAdapter
 import (
 	"context"
 	authv1 "gate-way/gen/proto"
-	"gate-way/internal/dto"
 	authMicroserviceDto "gate-way/internal/dto/auth-microservice-dto"
 	"gate-way/pkg/shortcut"
 
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (a *Adapter) GetUser(ctx context.Context, tokens *dto.Tokens) (*authMicroserviceDto.User, error) {
-	md := metadata.New(map[string]string{
-		"authorization": tokens.AccessToken,
-		"refresh-token": tokens.RefreshToken,
-	})
-
-	ctx = metadata.NewOutgoingContext(ctx, md)
-
+func (a *Adapter) GetUser(ctx context.Context) (*authMicroserviceDto.User, error) {
 	userReply, err := a.client.GetUser(ctx, &emptypb.Empty{})
 	if err != nil {
 		return &authMicroserviceDto.User{}, err

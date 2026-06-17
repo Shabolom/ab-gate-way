@@ -15,10 +15,13 @@ func (h *Handler) Register(ctx echo.Context) error {
 		return render.BadRequest(ctx, err)
 	}
 
-	response, err := h.authService.Register(ctx.Request().Context(), request)
+	response, tokens, err := h.authService.Register(ctx.Request().Context(), request)
 	if err != nil {
 		return render.FromError(ctx, err)
 	}
+
+	ctx.Response().Header().Add("authorization", tokens.AccessToken)
+	ctx.Response().Header().Add("refresh-token", tokens.RefreshToken)
 
 	return render.JSON(ctx, http.StatusOK, response)
 }

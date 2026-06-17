@@ -8,6 +8,8 @@ import (
 	"gate-way/pkg/shortcut"
 
 	"github.com/labstack/echo/v4"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -225,6 +227,35 @@ func FromError(c echo.Context, err error) error {
 		return nil
 	}
 
+	if st, ok := status.FromError(err); ok {
+		switch st.Code() {
+		case codes.InvalidArgument:
+			return BadRequest(c, errors.New(st.Message()))
+
+		case codes.Unauthenticated:
+			return Unauthorized(c, errors.New(st.Message()))
+
+		case codes.NotFound:
+			return NotFound(c, errors.New(st.Message()))
+
+		case codes.AlreadyExists:
+			return Conflict(c, errors.New(st.Message()))
+
+		case codes.PermissionDenied:
+			return Forbidden(c, errors.New(st.Message()))
+
+		case codes.FailedPrecondition:
+			return UnprocessableEntity(c, errors.New(st.Message()))
+
+		case codes.Unavailable,
+			codes.DeadlineExceeded:
+			return ServiceUnavailable(c, errors.New(st.Message()))
+
+		default:
+			return Internal(c, errors.New("internal server error"))
+		}
+	}
+
 	switch {
 	case errors.Is(err, shortcut.ErrFieldNotFilledName),
 		errors.Is(err, shortcut.ErrFieldNotFilledMail),
@@ -251,7 +282,17 @@ func FromError(c echo.Context, err error) error {
 		errors.Is(err, shortcut.ErrABInvalidRequest):
 		return BadRequest(c, err)
 
-	case errors.Is(err, shortcut.ErrTokenNotFilled):
+	case errors.Is(err, shortcut.ErrTokenNotFilled),
+		errors.Is(err, shortcut.ErrAccessTokenExpired),
+		errors.Is(err, shortcut.ErrRefreshTokenExpired),
+		errors.Is(err, shortcut.ErrAccessTokenNotFound),
+		errors.Is(err, shortcut.ErrRefreshTokenNotFound),
+		errors.Is(err, shortcut.ErrAccessTokenRevoked),
+		errors.Is(err, shortcut.ErrRefreshTokenRevoked),
+		errors.Is(err, shortcut.ErrInvalidAccessToken),
+		errors.Is(err, shortcut.ErrInvalidRefreshToken),
+		errors.Is(err, shortcut.ErrTokenPairMismatch),
+		errors.Is(err, shortcut.ErrSessionNotFound):
 		return Unauthorized(c, err)
 
 	case errors.Is(err, shortcut.ErrNotAllowedAge):

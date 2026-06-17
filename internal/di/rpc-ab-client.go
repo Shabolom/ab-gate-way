@@ -12,7 +12,7 @@ func (d *DI) NewAbClientGRPC() *grpc.ClientConn {
 	}
 
 	conn, err := grpc.NewClient(
-		d.Config().GrpcAddressAB(),
+		d.Config().ABGrpcConnection,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {

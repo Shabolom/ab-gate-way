@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"net"
 
 	"github.com/kelseyhightower/envconfig"
 )
@@ -16,16 +15,6 @@ type Prometheus struct {
 	Port string `envconfig:"PROMETHEUS_PORT" default:"2112"`
 }
 
-type ABConnectionGRPC struct {
-	Host string `envconfig:"AB_GRPC_HOST" default:"localhost"`
-	Port string `envconfig:"AB_GRPC_PORT" default:"8015"`
-}
-
-type AuthConnectionGRPC struct {
-	Host string `envconfig:"AUTH_GRPC_HOST" default:"localhost"`
-	Port string `envconfig:"AUTH_GRPC_PORT" default:"8019"`
-}
-
 type Config struct {
 	ServiceName        string `envconfig:"APP_NAME"`
 	Debug              bool   `envconfig:"APP_DEBUG"`
@@ -34,8 +23,8 @@ type Config struct {
 	ResendAppKey       string `envconfig:"RESEND_API_KEY"`
 	HealthcheckPort    string `envconfig:"HEALTHCHECK_PORT" default:"8093"`
 	Port               string `envconfig:"APP_PORT"`
-	GrpcConnection     ABConnectionGRPC
-	AuthConnectionGRPC AuthConnectionGRPC
+	ABGrpcConnection   string `envconfig:"GRPC_CONNECTION"`
+	AuthConnectionGRPC string `envconfig:"AUTH_CONNECTION_GRPC"`
 	Prometheus         Prometheus
 	MagickNumbers      MagickNumbers
 }
@@ -48,18 +37,4 @@ func FromEnv() (*Config, error) {
 	}
 
 	return cfg, nil
-}
-
-func (c *Config) GrpcAddressAB() string {
-	return net.JoinHostPort(
-		c.GrpcConnection.Host,
-		c.GrpcConnection.Port,
-	)
-}
-
-func (c *Config) GrpcAddressAuth() string {
-	return net.JoinHostPort(
-		c.GrpcConnection.Host,
-		c.GrpcConnection.Port,
-	)
 }

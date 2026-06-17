@@ -6,18 +6,9 @@ import (
 	"gate-way/internal/dto"
 	authMicroserviceDto "gate-way/internal/dto/auth-microservice-dto"
 	"gate-way/pkg/shortcut"
-
-	"google.golang.org/grpc/metadata"
 )
 
-func (a *Adapter) UpdateUsers(ctx context.Context, updateUser *authMicroserviceDto.UpdateUser, tokens *dto.Tokens) (*dto.CommonResponse, error) {
-	md := metadata.New(map[string]string{
-		"authorization": tokens.AccessToken,
-		"refresh-token": tokens.RefreshToken,
-	})
-
-	ctx = metadata.NewOutgoingContext(ctx, md)
-
+func (a *Adapter) UpdateUsers(ctx context.Context, updateUser *authMicroserviceDto.UpdateUser) (*dto.CommonResponse, error) {
 	data := &authv1.UpdateUser{
 		Mail: updateUser.Mail,
 		Name: updateUser.Name,

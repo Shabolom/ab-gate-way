@@ -47,7 +47,10 @@ func (d *DI) Logger() *zap.Logger {
 	var err error
 
 	if d.Config().Debug {
-		logger, err = zap.NewDevelopment()
+		cfg := zap.NewDevelopmentConfig()
+		cfg.DisableStacktrace = true
+
+		logger, err = cfg.Build()
 	} else {
 		logger, err = zap.NewProduction()
 	}

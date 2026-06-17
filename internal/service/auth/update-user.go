@@ -1,16 +1,15 @@
-package authService
+package auth
 
 import (
 	"context"
 	"gate-way/internal/dto"
 	authMicroserviceDto "gate-way/internal/dto/auth-microservice-dto"
 	"gate-way/pkg/shortcut"
-	"gate-way/pkg/utils"
 
 	"go.uber.org/zap"
 )
 
-func (s *Service) UpdateUser(ctx context.Context, updateUser *authMicroserviceDto.UpdateUser, tokens *dto.Tokens) (*dto.CommonResponse, error) {
+func (s *Service) UpdateUser(ctx context.Context, updateUser *authMicroserviceDto.UpdateUser) (*dto.CommonResponse, error) {
 	if updateUser == nil {
 		s.logger.Warn("update user validation failed: request is nil")
 		return nil, shortcut.ErrInvalidRequest
@@ -22,14 +21,6 @@ func (s *Service) UpdateUser(ctx context.Context, updateUser *authMicroserviceDt
 		zap.String("name", updateUser.Name),
 		zap.Int("age", updateUser.Age),
 	)
-
-	if err := utils.ValidateTokens(tokens); err != nil {
-		s.logger.Warn(
-			"update user validation failed",
-			zap.Error(err),
-		)
-		return nil, err
-	}
 
 	switch {
 	case updateUser.Mail == "":
@@ -52,7 +43,7 @@ func (s *Service) UpdateUser(ctx context.Context, updateUser *authMicroserviceDt
 		return nil, shortcut.ErrNotAllowedAge
 	}
 
-	response, err := s.authAdapter.UpdateUsers(ctx, updateUser, tokens)
+	response, err := s.authAdapter.UpdateUsers(ctx, updateUser)
 	if err != nil {
 		s.logger.Warn(
 			"update user failed",

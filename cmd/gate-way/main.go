@@ -30,6 +30,8 @@ func main() {
 	container := di.New(ctx)
 	container.Logger()
 
+	e.Use(container.AuthMiddleware)
+
 	handlers := container.GetHandlersHTTP()
 
 	api.RegisterHandlers(e, handlers)
@@ -37,7 +39,7 @@ func main() {
 	go func() {
 		err := e.Start(":" + container.Config().Port)
 		if err != nil {
-			container.Logger().Fatal("shutting down the server", zap.Error(err))
+			container.Logger().Info("shutting down the server", zap.Error(err))
 		}
 	}()
 

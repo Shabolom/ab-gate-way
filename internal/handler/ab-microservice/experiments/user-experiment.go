@@ -15,7 +15,7 @@ func (h *Handler) UserExperiment(ctx echo.Context) error {
 	if err != nil {
 		return render.BadRequest(ctx, err)
 	}
-
+	
 	response, err := h.abService.UserExperiment(ctx.Request().Context(), request)
 	if err != nil {
 		return render.FromError(ctx, err)

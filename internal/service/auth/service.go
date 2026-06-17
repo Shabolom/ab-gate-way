@@ -1,4 +1,4 @@
-package authService
+package auth
 
 import (
 	"context"
@@ -9,14 +9,15 @@ import (
 )
 
 type authAdapter interface {
-	Register(ctx context.Context, register *authMicroserviceDto.Register) (*dto.CommonResponse, error)
-	Login(ctx context.Context, login *authMicroserviceDto.Login) (*dto.CommonResponse, error)
-	Logout(ctx context.Context, tokens *dto.Tokens) (*dto.CommonResponse, error)
-	Refresh(ctx context.Context, tokens *dto.Tokens) (*dto.CommonResponse, error)
-	GetUsersList(ctx context.Context, tokens *dto.Tokens) ([]*authMicroserviceDto.User, error)
-	GetUser(ctx context.Context, tokens *dto.Tokens) (*authMicroserviceDto.User, error)
-	DeleteUsers(ctx context.Context, tokens *dto.Tokens) (*dto.CommonResponse, error)
-	UpdateUsers(ctx context.Context, updateUser *authMicroserviceDto.UpdateUser, tokens *dto.Tokens) (*dto.CommonResponse, error)
+	Refresh(ctx context.Context) (*dto.CommonResponse, error)
+	Register(ctx context.Context, register *authMicroserviceDto.Register) (*dto.CommonResponse, *dto.Tokens, error)
+	Logout(ctx context.Context) (*dto.CommonResponse, error)
+	Login(ctx context.Context, login *authMicroserviceDto.Login) (*dto.CommonResponse, *dto.Tokens, error)
+	GetUsersList(ctx context.Context) ([]*authMicroserviceDto.User, error)
+	GetUser(ctx context.Context) (*authMicroserviceDto.User, error)
+	DeleteUsers(ctx context.Context) (*dto.CommonResponse, error)
+	UpdateUsers(ctx context.Context, updateUser *authMicroserviceDto.UpdateUser) (*dto.CommonResponse, error)
+	Checker(ctx context.Context) (context.Context, error)
 }
 
 type Service struct {

@@ -6,18 +6,10 @@ import (
 	"gate-way/internal/dto"
 	"gate-way/pkg/shortcut"
 
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (a *Adapter) DeleteUsers(ctx context.Context, tokens *dto.Tokens) (*dto.CommonResponse, error) {
-	md := metadata.New(map[string]string{
-		"authorization": tokens.AccessToken,
-		"refresh-token": tokens.RefreshToken,
-	})
-
-	ctx = metadata.NewOutgoingContext(ctx, md)
-
+func (a *Adapter) DeleteUsers(ctx context.Context) (*dto.CommonResponse, error) {
 	deleteReply, err := a.client.DeleteUsers(ctx, &emptypb.Empty{})
 	if err != nil {
 		return &dto.CommonResponse{}, err

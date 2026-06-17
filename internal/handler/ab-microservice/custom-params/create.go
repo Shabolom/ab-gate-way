@@ -9,14 +9,14 @@ import (
 )
 
 func (h *Handler) CreateCustomParam(ctx echo.Context) error {
-	var request abDto.CreateCustomParamRequest
+	request := new(abDto.CreateCustomParamRequest)
 
 	err := ctx.Bind(request)
 	if err != nil {
 		return render.BadRequest(ctx, err)
 	}
 
-	response, err := h.abService.CreateCustomParam(ctx.Request().Context(), &request)
+	response, err := h.abService.CreateCustomParam(ctx.Request().Context(), request)
 	if err != nil {
 		return render.FromError(ctx, err)
 	}

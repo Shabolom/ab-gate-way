@@ -46,6 +46,21 @@ var (
 
 	ErrABNamespaceRequired = errors.New("ab namespace required")
 	ErrABSplitIDRequired   = errors.New("ab split id required")
+
+	ErrAccessTokenExpired  = errors.New("access token expired")
+	ErrRefreshTokenExpired = errors.New("refresh token expired")
+
+	ErrAccessTokenNotFound  = errors.New("access token not found")
+	ErrRefreshTokenNotFound = errors.New("refresh token not found")
+
+	ErrAccessTokenRevoked  = errors.New("access token revoked")
+	ErrRefreshTokenRevoked = errors.New("refresh token revoked")
+
+	ErrInvalidAccessToken  = errors.New("invalid access token")
+	ErrInvalidRefreshToken = errors.New("invalid refresh token")
+
+	ErrTokenPairMismatch = errors.New("token pair mismatch")
+	ErrSessionNotFound   = errors.New("session not found")
 )
 
 func FatalIfErr(err error) {

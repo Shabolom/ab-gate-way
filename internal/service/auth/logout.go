@@ -1,25 +1,16 @@
-package authService
+package auth
 
 import (
 	"context"
 	"gate-way/internal/dto"
-	"gate-way/pkg/utils"
 
 	"go.uber.org/zap"
 )
 
-func (s *Service) Logout(ctx context.Context, tokens *dto.Tokens) (*dto.CommonResponse, error) {
+func (s *Service) Logout(ctx context.Context) (*dto.CommonResponse, error) {
 	s.logger.Info("logout started")
 
-	if err := utils.ValidateTokens(tokens); err != nil {
-		s.logger.Warn(
-			"logout validation failed",
-			zap.Error(err),
-		)
-		return nil, err
-	}
-
-	response, err := s.authAdapter.Logout(ctx, tokens)
+	response, err := s.authAdapter.Logout(ctx)
 	if err != nil {
 		s.logger.Warn(
 			"logout failed",

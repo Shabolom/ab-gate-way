@@ -1,4 +1,4 @@
-package authService
+package auth
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Service) Register(ctx context.Context, register *authMicroserviceDto.Register) (*dto.CommonResponse, error) {
+func (s *Service) Register(ctx context.Context, register *authMicroserviceDto.Register) (*dto.CommonResponse, *dto.Tokens, error) {
 	s.logger.Info(
 		"register started",
 		zap.String("mail", register.Mail),
@@ -23,28 +23,28 @@ func (s *Service) Register(ctx context.Context, register *authMicroserviceDto.Re
 			zap.Int("age", register.Age),
 			zap.String("mail", register.Mail),
 		)
-		return nil, shortcut.ErrNotAllowedAge
+		return nil, nil, shortcut.ErrNotAllowedAge
 
 	case register.Name == "":
 		s.logger.Warn(
 			"register validation failed: name is empty",
 			zap.String("mail", register.Mail),
 		)
-		return nil, shortcut.ErrFieldNotFilledName
+		return nil, nil, shortcut.ErrFieldNotFilledName
 
 	case register.Mail == "":
 		s.logger.Warn("register validation failed: mail is empty")
-		return nil, shortcut.ErrFieldNotFilledMail
+		return nil, nil, shortcut.ErrFieldNotFilledMail
 
 	case register.Password == "":
 		s.logger.Warn(
 			"register validation failed: password is empty",
 			zap.String("mail", register.Mail),
 		)
-		return nil, shortcut.ErrFieldNotFilledPassword
+		return nil, nil, shortcut.ErrFieldNotFilledPassword
 	}
 
-	response, err := s.authAdapter.Register(ctx, register)
+	response, tokens, err := s.authAdapter.Register(ctx, register)
 	if err != nil {
 		s.logger.Warn(
 			"register failed",
@@ -52,7 +52,7 @@ func (s *Service) Register(ctx context.Context, register *authMicroserviceDto.Re
 			zap.String("name", register.Name),
 			zap.Error(err),
 		)
-		return nil, err
+		return nil, nil, err
 	}
 
 	s.logger.Info(
@@ -61,5 +61,5 @@ func (s *Service) Register(ctx context.Context, register *authMicroserviceDto.Re
 		zap.String("name", register.Name),
 	)
 
-	return response, nil
+	return response, tokens, nil
 }

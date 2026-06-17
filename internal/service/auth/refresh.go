@@ -1,25 +1,16 @@
-package authService
+package auth
 
 import (
 	"context"
 	"gate-way/internal/dto"
-	"gate-way/pkg/utils"
 
 	"go.uber.org/zap"
 )
 
-func (s *Service) Refresh(ctx context.Context, tokens *dto.Tokens) (*dto.CommonResponse, error) {
+func (s *Service) Refresh(ctx context.Context) (*dto.CommonResponse, error) {
 	s.logger.Info("refresh started")
 
-	if err := utils.ValidateTokens(tokens); err != nil {
-		s.logger.Warn(
-			"refresh validation failed",
-			zap.Error(err),
-		)
-		return nil, err
-	}
-
-	response, err := s.authAdapter.Refresh(ctx, tokens)
+	response, err := s.authAdapter.Refresh(ctx)
 	if err != nil {
 		s.logger.Warn(
 			"refresh failed",

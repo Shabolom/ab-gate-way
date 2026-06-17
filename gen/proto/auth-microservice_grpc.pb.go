@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v7.34.1
-// source: auth-microservice-dto.proto
+// source: auth-microservice.proto
 
 package authv1
 
@@ -24,6 +24,7 @@ const (
 	AccountService_Login_FullMethodName        = "/platform.mvp.AccountService/Login"
 	AccountService_Logout_FullMethodName       = "/platform.mvp.AccountService/Logout"
 	AccountService_Refresh_FullMethodName      = "/platform.mvp.AccountService/Refresh"
+	AccountService_Check_FullMethodName        = "/platform.mvp.AccountService/Check"
 	AccountService_GetUsersList_FullMethodName = "/platform.mvp.AccountService/GetUsersList"
 	AccountService_GetUser_FullMethodName      = "/platform.mvp.AccountService/GetUser"
 	AccountService_DeleteUsers_FullMethodName  = "/platform.mvp.AccountService/DeleteUsers"
@@ -40,6 +41,7 @@ type AccountServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LogoutReply, error)
 	Refresh(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RefreshReply, error)
+	Check(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*CheckReply, error)
 	GetUsersList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetUsersReply, error)
 	GetUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetUserReply, error)
 	DeleteUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DeleteUsersReply, error)
@@ -88,6 +90,16 @@ func (c *accountServiceClient) Refresh(ctx context.Context, in *emptypb.Empty, o
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RefreshReply)
 	err := c.cc.Invoke(ctx, AccountService_Refresh_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) Check(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*CheckReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckReply)
+	err := c.cc.Invoke(ctx, AccountService_Check_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -144,6 +156,7 @@ type AccountServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Logout(context.Context, *emptypb.Empty) (*LogoutReply, error)
 	Refresh(context.Context, *emptypb.Empty) (*RefreshReply, error)
+	Check(context.Context, *emptypb.Empty) (*CheckReply, error)
 	GetUsersList(context.Context, *emptypb.Empty) (*GetUsersReply, error)
 	GetUser(context.Context, *emptypb.Empty) (*GetUserReply, error)
 	DeleteUsers(context.Context, *emptypb.Empty) (*DeleteUsersReply, error)
@@ -168,6 +181,9 @@ func (UnimplementedAccountServiceServer) Logout(context.Context, *emptypb.Empty)
 }
 func (UnimplementedAccountServiceServer) Refresh(context.Context, *emptypb.Empty) (*RefreshReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method Refresh not implemented")
+}
+func (UnimplementedAccountServiceServer) Check(context.Context, *emptypb.Empty) (*CheckReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method Check not implemented")
 }
 func (UnimplementedAccountServiceServer) GetUsersList(context.Context, *emptypb.Empty) (*GetUsersReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUsersList not implemented")
@@ -273,6 +289,24 @@ func _AccountService_Refresh_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccountService_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).Check(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountService_Check_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).Check(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AccountService_GetUsersList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -369,6 +403,10 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AccountService_Refresh_Handler,
 		},
 		{
+			MethodName: "Check",
+			Handler:    _AccountService_Check_Handler,
+		},
+		{
 			MethodName: "GetUsersList",
 			Handler:    _AccountService_GetUsersList_Handler,
 		},
@@ -386,5 +424,5 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "auth-microservice-dto.proto",
+	Metadata: "auth-microservice.proto",
 }
