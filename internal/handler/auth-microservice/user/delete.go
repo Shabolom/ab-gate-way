@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *Handler) Delete(ctx echo.Context) error {
+func (h *Handler) DeleteUsers(ctx echo.Context) error {
 	tokens := utils.TokensFromHeaders(ctx)
 
 	response, err := h.authService.DeleteUser(

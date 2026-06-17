@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *Handler) Update(ctx echo.Context) error {
+func (h *Handler) UpdateUsers(ctx echo.Context) error {
 	tokens := utils.TokensFromHeaders(ctx)
 
 	request := new(userDto.UpdateUser)

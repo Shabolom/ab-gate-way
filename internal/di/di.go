@@ -3,7 +3,6 @@ package di
 import (
 	"context"
 	"fmt"
-
 	"gate-way/internal/config"
 
 	"go.uber.org/zap"
@@ -16,8 +15,6 @@ type DI struct {
 
 	abConn   *grpc.ClientConn
 	authConn *grpc.ClientConn
-
-	grpcServer *grpc.Server
 
 	//metrics *metrics.Metrics
 }
@@ -70,11 +67,22 @@ func (d *DI) Logger() *zap.Logger {
 	return d.logger
 }
 
-func (d *DI) Shoutdown() {
-	err := d.authConn.Close()
-
-	if err != nil {
-		d.Logger().Error("shoutdown", zap.Error(err))
+func (d *DI) Shutdown() {
+	if d.authConn != nil {
+		if err := d.authConn.Close(); err != nil {
+			d.Logger().Error(
+				"failed to close auth grpc connection",
+				zap.Error(err),
+			)
+		}
 	}
 
+	if d.abConn != nil {
+		if err := d.abConn.Close(); err != nil {
+			d.Logger().Error(
+				"failed to close ab grpc connection",
+				zap.Error(err),
+			)
+		}
+	}
 }

@@ -229,10 +229,26 @@ func FromError(c echo.Context, err error) error {
 	case errors.Is(err, shortcut.ErrFieldNotFilledName),
 		errors.Is(err, shortcut.ErrFieldNotFilledMail),
 		errors.Is(err, shortcut.ErrFieldNotFilledPassword),
-		errors.Is(err, shortcut.ErrValidation):
+		errors.Is(err, shortcut.ErrValidation),
+		errors.Is(err, shortcut.ErrABValidation),
+		errors.Is(err, shortcut.ErrABExperimentNameRequired),
+		errors.Is(err, shortcut.ErrABExperimentLayersRequired),
+		errors.Is(err, shortcut.ErrABExperimentGroupsMinCount),
+		errors.Is(err, shortcut.ErrABExperimentStartDateAfterEnd),
+		errors.Is(err, shortcut.ErrABExperimentRolloutOutOfRange),
+		errors.Is(err, shortcut.ErrABNamespaceNameRequired),
+		errors.Is(err, shortcut.ErrABLayerNameRequired),
+		errors.Is(err, shortcut.ErrABLayerNamespaceRequired),
+		errors.Is(err, shortcut.ErrABCustomParamNameRequired),
+		errors.Is(err, shortcut.ErrABCustomParamNamespaceRequired),
+		errors.Is(err, shortcut.ErrABCustomParamTypeRequired),
+		errors.Is(err, shortcut.ErrABExperimentIDRequired),
+		errors.Is(err, shortcut.ErrABNamespaceRequired),
+		errors.Is(err, shortcut.ErrABSplitIDRequired):
 		return ValidationError(c, err)
 
-	case errors.Is(err, shortcut.ErrInvalidRequest):
+	case errors.Is(err, shortcut.ErrInvalidRequest),
+		errors.Is(err, shortcut.ErrABInvalidRequest):
 		return BadRequest(c, err)
 
 	case errors.Is(err, shortcut.ErrTokenNotFilled):
@@ -253,11 +269,13 @@ func FromError(c echo.Context, err error) error {
 		return UnprocessableEntity(c, err)
 
 	case errors.Is(err, context.DeadlineExceeded),
-		errors.Is(err, context.Canceled):
+		errors.Is(err, context.Canceled),
+		errors.Is(err, shortcut.ErrABEmptyResponse):
 		return ServiceUnavailable(c, err)
 
 	case errors.Is(err, shortcut.ErrUnspecifiedRequest),
-		errors.Is(err, shortcut.ErrUnspecifiedResponseGetUser):
+		errors.Is(err, shortcut.ErrUnspecifiedResponseGetUser),
+		errors.Is(err, shortcut.ErrABUnspecified):
 		return Internal(c, err)
 
 	default:

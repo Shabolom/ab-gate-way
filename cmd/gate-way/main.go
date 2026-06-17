@@ -2,16 +2,24 @@ package main
 
 import (
 	"context"
-	"os"
-
+	api "gate-way/gen/echo"
 	"gate-way/internal/di"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 )
 
 func main() {
-	ctx := context.Background()
+	ctx, stop := signal.NotifyContext(
+		context.Background(),
+		syscall.SIGINT,
+		syscall.SIGTERM,
+	)
+	defer stop()
 
 	if err := godotenv.Load("./build/local/.env"); err != nil {
 		panic(err)
@@ -22,11 +30,29 @@ func main() {
 	container := di.New(ctx)
 	container.Logger()
 
-	// TODO: register routes here
-	// handlers := container.GetHTTPHandlers()
-	// _ = handlers
+	handlers := container.GetHandlersHTTP()
 
-	if err := e.Start(":" + os.Getenv("APP_PORT")); err != nil {
-		panic(err)
+	api.RegisterHandlers(e, handlers)
+
+	go func() {
+		err := e.Start(":" + container.Config().Port)
+		if err != nil {
+			container.Logger().Fatal("shutting down the server", zap.Error(err))
+		}
+	}()
+
+	<-ctx.Done()
+	container.Logger().Info("shutting down the server")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(),
+		time.Duration(container.Config().MagickNumbers.ContextInterval)*time.Second)
+	defer cancel()
+
+	if err := e.Shutdown(shutdownCtx); err != nil {
+		container.Logger().Error("failed to shutdown http server", zap.Error(err))
 	}
+
+	container.Shutdown()
+
+	container.Logger().Info("shutting down gracefully")
 }

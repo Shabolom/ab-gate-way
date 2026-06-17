@@ -33,6 +33,7 @@ type Config struct {
 	Secret             string `envconfig:"APP_SECRET"`
 	ResendAppKey       string `envconfig:"RESEND_API_KEY"`
 	HealthcheckPort    string `envconfig:"HEALTHCHECK_PORT" default:"8093"`
+	Port               string `envconfig:"APP_PORT"`
 	GrpcConnection     ABConnectionGRPC
 	AuthConnectionGRPC AuthConnectionGRPC
 	Prometheus         Prometheus

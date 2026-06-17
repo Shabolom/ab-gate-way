@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *Handler) List(ctx echo.Context) error {
+func (h *Handler) GetUsersList(ctx echo.Context) error {
 	tokens := utils.TokensFromHeaders(ctx)
 
 	response, err := h.authService.GetUsersList(ctx.Request().Context(), tokens)
