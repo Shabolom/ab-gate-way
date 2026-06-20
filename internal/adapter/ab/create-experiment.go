@@ -2,6 +2,7 @@ package abAdapter
 
 import (
 	"context"
+	"fmt"
 	authv1 "gate-way/gen/proto"
 	"gate-way/internal/dto"
 	abDto "gate-way/internal/dto/ab-dto"
@@ -40,6 +41,7 @@ func (a *Adapter) CreateExperiment(ctx context.Context, request *abDto.CreateExp
 				Value:      customParam.Value,
 			}
 			customParams = append(customParams, customParamData)
+			fmt.Println(customParamData, 4444, customParam.ParamID, 123)
 		}
 
 		requestBody.CustomParamGroups = append(requestBody.CustomParamGroups, &authv1.CustomParamGroup{

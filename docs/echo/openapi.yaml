@@ -439,58 +439,83 @@ components:
       properties:
         name:
           type: string
-          example: test_experiment
+          example: test_experiment_gate_way
+
         rollout_percentage:
           type: integer
           format: int64
           example: 50
+
         start_date:
           type: string
           format: date-time
           example: "2026-06-16T10:00:00Z"
+
         end_date:
           type: string
           format: date-time
           example: "2026-07-16T10:00:00Z"
+
         layers_id:
           type: array
           items:
             type: integer
             format: int64
+          example:
+            - 10
+
         passing_cities:
           type: array
           items:
             type: string
+          example:
+            - moscow
+
         excluded_cities:
           type: array
           items:
             type: string
+          example:
+            - sochi
+
         passing_stores:
           type: array
           items:
             type: string
+          example:
+            - magnit
+
         excluded_stores:
           type: array
           items:
             type: string
+          example:
+            - magnit_family
+
         groups:
           type: array
           items:
             $ref: '#/components/schemas/Group'
+
         custom_param_groups:
           type: array
           items:
             $ref: '#/components/schemas/CustomParamGroup'
+          example:
+            - custom_param:
+                - parametr_id: 8
+                  condition: "="
+                  value: "10"
+            - custom_param:
+                - parametr_id: 7
+                  condition: "="
+                  value: "test"
 
     CustomParamGroup:
       type: object
       required:
-        - percentage
         - custom_param
       properties:
-        percentage:
-          type: integer
-          format: int64
         custom_param:
           type: array
           items:
@@ -506,12 +531,15 @@ components:
         parametr_id:
           type: integer
           format: int64
+          example: 8
+
         condition:
           type: string
-          example: EQUAL
+          example: "="
+
         value:
           type: string
-          example: "1.2.3"
+          example: "10"
 
     Group:
       type: object
@@ -521,14 +549,20 @@ components:
       properties:
         name:
           type: string
+          example: test_gate_way_group_1
+
         rolling_percentage:
           type: integer
           format: int64
+          example: 90
+
         device_id:
           type: array
           items:
             type: integer
             format: int64
+          example:
+            - 1
 
     CreateNamespaceRequest:
       type: object

@@ -44,7 +44,7 @@ func (d *DI) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 				zap.String("path", c.Path()),
 			)
 
-			return render.NewUnauthorized(shortcut.ErrTokenNotFilled)
+			return render.BadRequest(c, shortcut.ErrAccessTokenNotFound)
 		}
 
 		if refreshToken == "" {
@@ -54,7 +54,7 @@ func (d *DI) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 				zap.String("path", c.Path()),
 			)
 
-			return render.NewUnauthorized(shortcut.ErrTokenNotFilled)
+			return render.BadRequest(c, shortcut.ErrRefreshTokenNotFound)
 		}
 
 		ctx = withTokensMetadata(ctx, token, refreshToken)
