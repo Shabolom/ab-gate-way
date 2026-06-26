@@ -1151,7 +1151,7 @@ func (x *DeleteUsersReply) GetMessage() string {
 
 type UpdateUsersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UpdatedUser   *UpdateUser            `protobuf:"bytes,2,opt,name=updatedUser,proto3" json:"updatedUser,omitempty"`
+	UpdatedUser   *UpdateUser            `protobuf:"bytes,1,opt,name=updatedUser,proto3" json:"updatedUser,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1195,9 +1195,9 @@ func (x *UpdateUsersRequest) GetUpdatedUser() *UpdateUser {
 
 type UpdateUser struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Mail          string                 `protobuf:"bytes,2,opt,name=mail,proto3" json:"mail,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Age           uint32                 `protobuf:"varint,4,opt,name=age,proto3" json:"age,omitempty"`
+	Mail          string                 `protobuf:"bytes,1,opt,name=mail,proto3" json:"mail,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Age           uint32                 `protobuf:"varint,3,opt,name=age,proto3" json:"age,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1413,12 +1413,12 @@ const file_auth_microservice_proto_rawDesc = "" +
 	"\x0fINVALID_REQUEST\x10\x02\x12\r\n" +
 	"\tSTATUS_OK\x10\x03\"P\n" +
 	"\x12UpdateUsersRequest\x12:\n" +
-	"\vupdatedUser\x18\x02 \x01(\v2\x18.platform.mvp.UpdateUserR\vupdatedUser\"F\n" +
+	"\vupdatedUser\x18\x01 \x01(\v2\x18.platform.mvp.UpdateUserR\vupdatedUser\"F\n" +
 	"\n" +
 	"UpdateUser\x12\x12\n" +
-	"\x04mail\x18\x02 \x01(\tR\x04mail\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x12\x10\n" +
-	"\x03age\x18\x04 \x01(\rR\x03age\"\x8a\x02\n" +
+	"\x04mail\x18\x01 \x01(\tR\x04mail\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x10\n" +
+	"\x03age\x18\x03 \x01(\rR\x03age\"\x8a\x02\n" +
 	"\x10UpdateUsersReply\x12V\n" +
 	"\x0ferr_info_reason\x18\x01 \x01(\x0e2..platform.mvp.UpdateUsersReply.ERR_INFO_REASONR\rerrInfoReason\x12&\n" +
 	"\x04user\x18\x02 \x01(\v2\x12.platform.mvp.UserR\x04user\x12\x18\n" +

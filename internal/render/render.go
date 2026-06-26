@@ -13,29 +13,29 @@ import (
 )
 
 const (
-	CodeBadRequest          = "BAD_REQUEST"
-	CodeValidationError     = "VALIDATION_ERROR"
-	CodeUnauthorized        = "UNAUTHORIZED"
-	CodeForbidden           = "FORBIDDEN"
-	CodeNotFound            = "NOT_FOUND"
-	CodeConflict            = "CONFLICT"
-	CodeUnprocessableEntity = "UNPROCESSABLE_ENTITY"
-	CodeTooManyRequests     = "TOO_MANY_REQUESTS"
-	CodeInternalError       = "INTERNAL_ERROR"
-	CodeServiceUnavailable  = "SERVICE_UNAVAILABLE"
+	CodeBadRequest          = "400"
+	CodeUnauthorized        = "401"
+	CodeForbidden           = "403"
+	CodeNotFound            = "404"
+	CodeConflict            = "409"
+	CodeUnprocessableEntity = "422"
+	CodeTooManyRequests     = "429"
+	CodeInternalError       = "500"
+	CodeServiceUnavailable  = "503"
+	CodeValidationError     = "422"
 )
 
 const (
-	MsgBadRequest          = "Bad request"
-	MsgValidationError     = "Validation failed"
-	MsgUnauthorized        = "Unauthorized"
-	MsgForbidden           = "Forbidden"
-	MsgNotFound            = "Resource not found"
-	MsgConflict            = "Conflict"
-	MsgUnprocessableEntity = "Unprocessable entity"
-	MsgTooManyRequests     = "Too many requests"
-	MsgInternalError       = "Internal server error"
-	MsgServiceUnavailable  = "Service unavailable"
+	MsgBadRequest          = "bad request"
+	MsgValidationError     = "validation failed"
+	MsgUnauthorized        = "unauthorized"
+	MsgForbidden           = "forbidden"
+	MsgNotFound            = "resource not found"
+	MsgConflict            = "conflict"
+	MsgUnprocessableEntity = "unprocessable entity"
+	MsgTooManyRequests     = "too many requests"
+	MsgInternalError       = "internal server error"
+	MsgServiceUnavailable  = "service unavailable"
 )
 
 type ErrorResponse struct {
@@ -257,6 +257,7 @@ func FromError(c echo.Context, err error) error {
 	}
 
 	switch {
+
 	case errors.Is(err, shortcut.ErrFieldNotFilledName),
 		errors.Is(err, shortcut.ErrFieldNotFilledMail),
 		errors.Is(err, shortcut.ErrFieldNotFilledPassword),
@@ -274,11 +275,20 @@ func FromError(c echo.Context, err error) error {
 		errors.Is(err, shortcut.ErrABCustomParamNamespaceRequired),
 		errors.Is(err, shortcut.ErrABCustomParamTypeRequired),
 		errors.Is(err, shortcut.ErrABExperimentIDRequired),
-		errors.Is(err, shortcut.ErrABNamespaceRequired),
-		errors.Is(err, shortcut.ErrABSplitIDRequired):
+		errors.Is(err, shortcut.ErrFeatureToggleIOSRolloutOutOfRange),
+		errors.Is(err, shortcut.ErrFeatureToggleAndroidRolloutOutOfRange),
+		errors.Is(err, shortcut.ErrFeatureToggleWebRolloutOutOfRange),
+		errors.Is(err, shortcut.ErrFeatureToggleRolloutOutOfRange),
+		errors.Is(err, shortcut.ErrFeatureToggleID),
+		errors.Is(err, shortcut.ErrFeatureToggleNamespaceIDRequired),
+		errors.Is(err, shortcut.ErrFeatureUserIDMissing),
+		errors.Is(err, shortcut.ErrFeatureToggleNameRequired),
+		errors.Is(err, shortcut.ErrFeatureStatusMissing),
+		errors.Is(err, shortcut.ErrABNamespaceRequired):
 		return ValidationError(c, err)
 
 	case errors.Is(err, shortcut.ErrInvalidRequest),
+		errors.Is(err, shortcut.ErrABSplitIDRequired),
 		errors.Is(err, shortcut.ErrABInvalidRequest):
 		return BadRequest(c, err)
 

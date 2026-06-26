@@ -15,11 +15,17 @@ func (h *Handler) UserExperiment(ctx echo.Context) error {
 	if err != nil {
 		return render.BadRequest(ctx, err)
 	}
-	
+
 	response, err := h.abService.UserExperiment(ctx.Request().Context(), request)
 	if err != nil {
 		return render.FromError(ctx, err)
 	}
+	
+	if len(response.ExperimentsReply) == 0 {
+		return render.JSON(ctx, http.StatusOK, abDto.ExperimentsReply{
+			ExperimentsReply: []abDto.ExperimentReply{},
+		})
+	}
 
-	return render.JSON(ctx, http.StatusOK, response)
+	return render.JSON(ctx, http.StatusOK, *response)
 }

@@ -34,3 +34,18 @@ func experimentsReplyErr(reason authv1.ExperimentsReply_ERR_INFO_REASON) error {
 		return shortcut.ErrABUnspecified
 	}
 }
+
+func isUserInFeatureReplyErr(reason authv1.IsUserInFeatureReply_ERR_INFO_REASON) error {
+	switch reason {
+	case authv1.IsUserInFeatureReply_STATUS_OK:
+		return nil
+	case authv1.IsUserInFeatureReply_VALIDATION_ERROR:
+		return shortcut.ErrABValidation
+	case authv1.IsUserInFeatureReply_INVALID_REQUEST:
+		return shortcut.ErrABInvalidRequest
+	case authv1.IsUserInFeatureReply_UNSPECIFIED:
+		return shortcut.ErrABUnspecified
+	default:
+		return shortcut.ErrABUnspecified
+	}
+}

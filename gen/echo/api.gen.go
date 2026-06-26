@@ -36,6 +36,30 @@ func (e ErrInfoReason) Valid() bool {
 	}
 }
 
+// Defines values for FeatureToggleStatus.
+const (
+	Active   FeatureToggleStatus = "active"
+	Archived FeatureToggleStatus = "archived"
+	Disabled FeatureToggleStatus = "disabled"
+	Draft    FeatureToggleStatus = "draft"
+)
+
+// Valid indicates whether the value is a known member of the FeatureToggleStatus enum.
+func (e FeatureToggleStatus) Valid() bool {
+	switch e {
+	case Active:
+		return true
+	case Archived:
+		return true
+	case Disabled:
+		return true
+	case Draft:
+		return true
+	default:
+		return false
+	}
+}
+
 // AuthReply defines model for AuthReply.
 type AuthReply struct {
 	ErrInfoReason ErrInfoReason `json:"err_info_reason"`
@@ -64,6 +88,16 @@ type CreateExperimentRequest struct {
 	StartDate         time.Time           `json:"start_date"`
 }
 
+// CreateFeatureToggleRequest defines model for CreateFeatureToggleRequest.
+type CreateFeatureToggleRequest struct {
+	AndroidRolloutPercentage *int64 `json:"android_rollout_percentage,omitempty"`
+	IosRolloutPercentage     *int64 `json:"ios_rollout_percentage,omitempty"`
+	Name                     string `json:"name"`
+	NamespaceId              int64  `json:"namespace_id"`
+	RolloutPercentage        *int64 `json:"rollout_percentage,omitempty"`
+	WebRolloutPercentage     *int64 `json:"web_rollout_percentage,omitempty"`
+}
+
 // CreateLayerRequest defines model for CreateLayerRequest.
 type CreateLayerRequest struct {
 	Description *string `json:"description,omitempty"`
@@ -87,7 +121,6 @@ type CustomParam struct {
 // CustomParamGroup defines model for CustomParamGroup.
 type CustomParamGroup struct {
 	CustomParam []CustomParam `json:"custom_param"`
-	Percentage  int64         `json:"percentage"`
 }
 
 // DeleteUsersReply defines model for DeleteUsersReply.
@@ -122,6 +155,15 @@ type ExperimentsReply struct {
 	ExperimentsReply []ExperimentReply `json:"experiments_reply"`
 }
 
+// Feature defines model for Feature.
+type Feature struct {
+	FeatureId   int64  `json:"feature_id"`
+	FeatureName string `json:"feature_name"`
+}
+
+// FeatureToggleStatus defines model for FeatureToggleStatus.
+type FeatureToggleStatus string
+
 // GetUserReply defines model for GetUserReply.
 type GetUserReply struct {
 	ErrInfoReason ErrInfoReason `json:"err_info_reason"`
@@ -139,6 +181,19 @@ type Group struct {
 	DeviceId          *[]int64 `json:"device_id,omitempty"`
 	Name              string   `json:"name"`
 	RollingPercentage int64    `json:"rolling_percentage"`
+}
+
+// IsUserInFeatureReply defines model for IsUserInFeatureReply.
+type IsUserInFeatureReply struct {
+	ErrInfoReason ErrInfoReason `json:"err_info_reason"`
+	Features      []Feature     `json:"features"`
+}
+
+// IsUserInFeatureRequest defines model for IsUserInFeatureRequest.
+type IsUserInFeatureRequest struct {
+	Namespace string `json:"namespace"`
+	Platform  string `json:"platform"`
+	UserId    int64  `json:"user_id"`
 }
 
 // LoginRequest defines model for LoginRequest.
@@ -161,10 +216,23 @@ type RegisterRequest struct {
 	Password string `json:"password"`
 }
 
+// SetFeatureToggleStatusRequest defines model for SetFeatureToggleStatusRequest.
+type SetFeatureToggleStatusRequest struct {
+	Status FeatureToggleStatus `json:"status"`
+}
+
 // StockReply defines model for StockReply.
 type StockReply struct {
 	ErrInfoReason ErrInfoReason `json:"err_info_reason"`
 	Message       string        `json:"message"`
+}
+
+// UpdateFeatureToggleRolloutRequest defines model for UpdateFeatureToggleRolloutRequest.
+type UpdateFeatureToggleRolloutRequest struct {
+	AndroidRolloutPercentage *int64 `json:"android_rollout_percentage,omitempty"`
+	IosRolloutPercentage     *int64 `json:"ios_rollout_percentage,omitempty"`
+	RolloutPercentage        *int64 `json:"rollout_percentage,omitempty"`
+	WebRolloutPercentage     *int64 `json:"web_rollout_percentage,omitempty"`
 }
 
 // UpdateUser defines model for UpdateUser.
@@ -211,6 +279,18 @@ type CreateExperimentJSONRequestBody = CreateExperimentRequest
 // UserExperimentJSONRequestBody defines body for UserExperiment for application/json ContentType.
 type UserExperimentJSONRequestBody = ExperimentRequest
 
+// CreateFeatureToggleJSONRequestBody defines body for CreateFeatureToggle for application/json ContentType.
+type CreateFeatureToggleJSONRequestBody = CreateFeatureToggleRequest
+
+// IsUserInFeatureJSONRequestBody defines body for IsUserInFeature for application/json ContentType.
+type IsUserInFeatureJSONRequestBody = IsUserInFeatureRequest
+
+// UpdateFeatureToggleRolloutJSONRequestBody defines body for UpdateFeatureToggleRollout for application/json ContentType.
+type UpdateFeatureToggleRolloutJSONRequestBody = UpdateFeatureToggleRolloutRequest
+
+// SetFeatureToggleStatusJSONRequestBody defines body for SetFeatureToggleStatus for application/json ContentType.
+type SetFeatureToggleStatusJSONRequestBody = SetFeatureToggleStatusRequest
+
 // CreateLayerJSONRequestBody defines body for CreateLayer for application/json ContentType.
 type CreateLayerJSONRequestBody = CreateLayerRequest
 
@@ -248,7 +328,22 @@ type ServerInterface interface {
 	SetReadyExperiment(ctx echo.Context, experimentId int64) error
 	// Stop experiment
 	// (POST /v1/experiments/{experiment_id}/stopped)
-	SetStopedExperiment(ctx echo.Context, experimentId int64) error
+	SetStoppedExperiment(ctx echo.Context, experimentId int64) error
+	// Create feature toggle
+	// (POST /v1/feature-toggles)
+	CreateFeatureToggle(ctx echo.Context) error
+	// Check user feature toggles
+	// (POST /v1/feature-toggles/user)
+	IsUserInFeature(ctx echo.Context) error
+	// Check feature toggle status
+	// (GET /v1/feature-toggles/{feature_toggle_id}/enabled)
+	IsFeatureEnabled(ctx echo.Context, featureToggleId int64) error
+	// Update feature toggle rollout
+	// (PATCH /v1/feature-toggles/{feature_toggle_id}/rollout)
+	UpdateFeatureToggleRollout(ctx echo.Context, featureToggleId int64) error
+	// Set feature toggle status
+	// (POST /v1/feature-toggles/{feature_toggle_id}/status)
+	SetFeatureToggleStatus(ctx echo.Context, featureToggleId int64) error
 	// Create layer
 	// (POST /v1/layers)
 	CreateLayer(ctx echo.Context) error
@@ -353,8 +448,8 @@ func (w *ServerInterfaceWrapper) SetReadyExperiment(ctx echo.Context) error {
 	return err
 }
 
-// SetStopedExperiment converts echo context to params.
-func (w *ServerInterfaceWrapper) SetStopedExperiment(ctx echo.Context) error {
+// SetStoppedExperiment converts echo context to params.
+func (w *ServerInterfaceWrapper) SetStoppedExperiment(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "experiment_id" -------------
 	var experimentId int64
@@ -365,7 +460,73 @@ func (w *ServerInterfaceWrapper) SetStopedExperiment(ctx echo.Context) error {
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.SetStopedExperiment(ctx, experimentId)
+	err = w.Handler.SetStoppedExperiment(ctx, experimentId)
+	return err
+}
+
+// CreateFeatureToggle converts echo context to params.
+func (w *ServerInterfaceWrapper) CreateFeatureToggle(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.CreateFeatureToggle(ctx)
+	return err
+}
+
+// IsUserInFeature converts echo context to params.
+func (w *ServerInterfaceWrapper) IsUserInFeature(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.IsUserInFeature(ctx)
+	return err
+}
+
+// IsFeatureEnabled converts echo context to params.
+func (w *ServerInterfaceWrapper) IsFeatureEnabled(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "feature_toggle_id" -------------
+	var featureToggleId int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "feature_toggle_id", ctx.Param("feature_toggle_id"), &featureToggleId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter feature_toggle_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.IsFeatureEnabled(ctx, featureToggleId)
+	return err
+}
+
+// UpdateFeatureToggleRollout converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateFeatureToggleRollout(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "feature_toggle_id" -------------
+	var featureToggleId int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "feature_toggle_id", ctx.Param("feature_toggle_id"), &featureToggleId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter feature_toggle_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UpdateFeatureToggleRollout(ctx, featureToggleId)
+	return err
+}
+
+// SetFeatureToggleStatus converts echo context to params.
+func (w *ServerInterfaceWrapper) SetFeatureToggleStatus(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "feature_toggle_id" -------------
+	var featureToggleId int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "feature_toggle_id", ctx.Param("feature_toggle_id"), &featureToggleId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter feature_toggle_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.SetFeatureToggleStatus(ctx, featureToggleId)
 	return err
 }
 
@@ -478,7 +639,12 @@ func RegisterHandlersWithOptions(router EchoRouter, si ServerInterface, options 
 	router.POST(options.BaseURL+"/v1/experiments", wrapper.CreateExperiment, options.OperationMiddlewares["CreateExperiment"]...)
 	router.POST(options.BaseURL+"/v1/experiments/user", wrapper.UserExperiment, options.OperationMiddlewares["UserExperiment"]...)
 	router.POST(options.BaseURL+"/v1/experiments/:experiment_id/ready", wrapper.SetReadyExperiment, options.OperationMiddlewares["SetReadyExperiment"]...)
-	router.POST(options.BaseURL+"/v1/experiments/:experiment_id/stopped", wrapper.SetStopedExperiment, options.OperationMiddlewares["SetStopedExperiment"]...)
+	router.POST(options.BaseURL+"/v1/experiments/:experiment_id/stopped", wrapper.SetStoppedExperiment, options.OperationMiddlewares["SetStoppedExperiment"]...)
+	router.POST(options.BaseURL+"/v1/feature-toggles", wrapper.CreateFeatureToggle, options.OperationMiddlewares["CreateFeatureToggle"]...)
+	router.POST(options.BaseURL+"/v1/feature-toggles/user", wrapper.IsUserInFeature, options.OperationMiddlewares["IsUserInFeature"]...)
+	router.GET(options.BaseURL+"/v1/feature-toggles/:feature_toggle_id/enabled", wrapper.IsFeatureEnabled, options.OperationMiddlewares["IsFeatureEnabled"]...)
+	router.PATCH(options.BaseURL+"/v1/feature-toggles/:feature_toggle_id/rollout", wrapper.UpdateFeatureToggleRollout, options.OperationMiddlewares["UpdateFeatureToggleRollout"]...)
+	router.POST(options.BaseURL+"/v1/feature-toggles/:feature_toggle_id/status", wrapper.SetFeatureToggleStatus, options.OperationMiddlewares["SetFeatureToggleStatus"]...)
 	router.POST(options.BaseURL+"/v1/layers", wrapper.CreateLayer, options.OperationMiddlewares["CreateLayer"]...)
 	router.POST(options.BaseURL+"/v1/namespaces", wrapper.CreateNamespace, options.OperationMiddlewares["CreateNamespace"]...)
 	router.DELETE(options.BaseURL+"/v1/users", wrapper.DeleteUsers, options.OperationMiddlewares["DeleteUsers"]...)

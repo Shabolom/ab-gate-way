@@ -3,6 +3,7 @@ package httptransport
 import (
 	customParams "gate-way/internal/handler/ab-microservice/custom-params"
 	"gate-way/internal/handler/ab-microservice/experiments"
+	"gate-way/internal/handler/ab-microservice/feature"
 	"gate-way/internal/handler/ab-microservice/layer"
 	"gate-way/internal/handler/ab-microservice/namespace"
 	"gate-way/internal/handler/auth-microservice/auth"
@@ -16,6 +17,7 @@ type (
 	getExperimentHandlers  = *experiments.Handler
 	getLayerHandlers       = *layer.Handler
 	getNamespaceHandlers   = *namespace.Handler
+	getFeatureHandlers     = *feature.Handler
 )
 
 type Handlers struct {
@@ -25,6 +27,7 @@ type Handlers struct {
 	getExperimentHandlers
 	getLayerHandlers
 	getNamespaceHandlers
+	getFeatureHandlers
 }
 
 func New(
@@ -34,6 +37,7 @@ func New(
 	getExperimentHandlers getExperimentHandlers,
 	getLayerHandlers getLayerHandlers,
 	getNamespaceHandlers getNamespaceHandlers,
+	getFeatureHandlers getFeatureHandlers,
 ) *Handlers {
 	return &Handlers{
 		getAuthHandlers:        getAuthHandlers,
@@ -42,5 +46,6 @@ func New(
 		getExperimentHandlers:  getExperimentHandlers,
 		getLayerHandlers:       getLayerHandlers,
 		getNamespaceHandlers:   getNamespaceHandlers,
+		getFeatureHandlers:     getFeatureHandlers,
 	}
 }

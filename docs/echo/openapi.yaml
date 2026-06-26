@@ -7,6 +7,22 @@ info:
 servers:
   - url: http://localhost:8080
 
+tags:
+  - name: auth
+    description: Authorization and session management
+  - name: users
+    description: User management
+  - name: experiments
+    description: Experiments management
+  - name: namespaces
+    description: Namespaces management
+  - name: layers
+    description: Layers management
+  - name: custom-params
+    description: Custom experiment parameters
+  - name: feature-toggles
+    description: Feature toggles management
+
 paths:
   /v1/auth/register:
     post:
@@ -226,7 +242,7 @@ paths:
 
   /v1/experiments/{experiment_id}/stopped:
     post:
-      operationId: SetStopedExperiment
+      operationId: SetStoppedExperiment
       tags: [experiments]
       summary: Stop experiment
       parameters:
@@ -262,6 +278,117 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StockReply'
+
+
+  /v1/feature-toggles:
+    post:
+      operationId: CreateFeatureToggle
+      tags: [feature-toggles]
+      summary: Create feature toggle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFeatureToggleRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockReply'
+
+  /v1/feature-toggles/{feature_toggle_id}/rollout:
+    patch:
+      operationId: UpdateFeatureToggleRollout
+      tags: [feature-toggles]
+      summary: Update feature toggle rollout
+      parameters:
+        - name: feature_toggle_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFeatureToggleRolloutRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockReply'
+
+  /v1/feature-toggles/{feature_toggle_id}/status:
+    post:
+      operationId: SetFeatureToggleStatus
+      tags: [feature-toggles]
+      summary: Set feature toggle status
+      parameters:
+        - name: feature_toggle_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetFeatureToggleStatusRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockReply'
+
+  /v1/feature-toggles/{feature_toggle_id}/enabled:
+    get:
+      operationId: IsFeatureEnabled
+      tags: [feature-toggles]
+      summary: Check feature toggle status
+      parameters:
+        - name: feature_toggle_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockReply'
+
+  /v1/feature-toggles/user:
+    post:
+      operationId: IsUserInFeature
+      tags: [feature-toggles]
+      summary: Check user feature toggles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IsUserInFeatureRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IsUserInFeatureReply'
 
 components:
   schemas:
@@ -662,3 +789,131 @@ components:
           type: string
         group_name:
           type: string
+
+    FeatureToggleStatus:
+      type: string
+      enum:
+        - draft
+        - active
+        - disabled
+        - archived
+
+    CreateFeatureToggleRequest:
+      type: object
+      required:
+        - name
+        - namespace_id
+      properties:
+        name:
+          type: string
+          example: test_feature_toggle
+        namespace_id:
+          type: integer
+          format: int64
+          example: 1
+        ios_rollout_percentage:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+          example: 5
+        android_rollout_percentage:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+          example: 10
+        web_rollout_percentage:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+          example: 15
+        rollout_percentage:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+          example: 5
+
+    UpdateFeatureToggleRolloutRequest:
+      type: object
+      properties:
+        ios_rollout_percentage:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+          example: 5
+        android_rollout_percentage:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+          example: 10
+        web_rollout_percentage:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+          example: 15
+        rollout_percentage:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+          example: 5
+
+    SetFeatureToggleStatusRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/FeatureToggleStatus'
+
+    IsUserInFeatureRequest:
+      type: object
+      required:
+        - user_id
+        - namespace
+        - platform
+      properties:
+        user_id:
+          type: integer
+          format: int64
+          example: 123
+        namespace:
+          type: string
+          example: mobile_app
+        platform:
+          type: string
+          example: ios
+
+    IsUserInFeatureReply:
+      type: object
+      required:
+        - err_info_reason
+        - features
+      properties:
+        err_info_reason:
+          $ref: '#/components/schemas/ErrInfoReason'
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+
+    Feature:
+      type: object
+      required:
+        - feature_id
+        - feature_name
+      properties:
+        feature_id:
+          type: integer
+          format: int64
+          example: 1
+        feature_name:
+          type: string
+          example: new_checkout
+

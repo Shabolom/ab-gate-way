@@ -4,6 +4,7 @@ import (
 	httptransport "gate-way/internal/handler"
 	customParams "gate-way/internal/handler/ab-microservice/custom-params"
 	"gate-way/internal/handler/ab-microservice/experiments"
+	"gate-way/internal/handler/ab-microservice/feature"
 	"gate-way/internal/handler/ab-microservice/layer"
 	"gate-way/internal/handler/ab-microservice/namespace"
 	"gate-way/internal/handler/auth-microservice/auth"
@@ -18,6 +19,7 @@ func (d *DI) GetHandlersHTTP() *httptransport.Handlers {
 		d.getExperimentHandlers(),
 		d.getLayerHandlers(),
 		d.getNamespaceHandlers(),
+		d.getFeatureHandler(),
 	)
 }
 
@@ -43,4 +45,7 @@ func (d *DI) getExperimentHandlers() *experiments.Handler {
 
 func (d *DI) getCustomParamHandlers() *customParams.Handler {
 	return customParams.New(d.GetAbService())
+}
+func (d *DI) getFeatureHandler() *feature.Handler {
+	return feature.New(d.GetAbService())
 }

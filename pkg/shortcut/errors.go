@@ -61,6 +61,20 @@ var (
 
 	ErrTokenPairMismatch = errors.New("token pair mismatch")
 	ErrSessionNotFound   = errors.New("session not found")
+
+	ErrFeatureToggleNameRequired        = errors.New("feature toggle name required")
+	ErrFeatureToggleNamespaceIDRequired = errors.New("feature toggle namespace id required")
+
+	ErrFeatureToggleRolloutRequired = errors.New("feature toggle rollout required")
+
+	ErrFeatureToggleIOSRolloutOutOfRange     = errors.New("feature toggle ios rollout out of range")
+	ErrFeatureToggleAndroidRolloutOutOfRange = errors.New("feature toggle android rollout out of range")
+	ErrFeatureToggleWebRolloutOutOfRange     = errors.New("feature toggle web rollout out of range")
+	ErrFeatureToggleRolloutOutOfRange        = errors.New("feature toggle rollout out of range")
+	ErrFeatureToggleID                       = errors.New("feature toggle ID validate error")
+	ErrFeatureNamespaceMissing               = errors.New("feature namespace missing")
+	ErrFeatureUserIDMissing                  = errors.New("feature user id missing")
+	ErrFeatureStatusMissing                  = errors.New("feature status missing")
 )
 
 func FatalIfErr(err error) {

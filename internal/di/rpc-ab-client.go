@@ -13,8 +13,7 @@ func (d *DI) NewAbClientGRPC() *grpc.ClientConn {
 
 	conn, err := grpc.NewClient(
 		d.Config().ABGrpcConnection,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		d.Logger().Fatal(
 			"Failed to create ab client",

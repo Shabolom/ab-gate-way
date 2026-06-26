@@ -9,13 +9,22 @@ import (
 )
 
 type abAdapter interface {
+	CreateNamespace(ctx context.Context, request *abDto.Namespace) (*dto.CommonResponse, error)
+
+	CreateLayer(ctx context.Context, layer *abDto.Layer) (*dto.CommonResponse, error)
+
+	CreateCustomParam(ctx context.Context, request *abDto.CreateCustomParamRequest) (*dto.CommonResponse, error)
+
 	UserExperiment(ctx context.Context, request *abDto.UserExperimentRequest) (*abDto.ExperimentsReply, error)
 	CreateExperiment(ctx context.Context, request *abDto.CreateExperimentRequest) (*dto.CommonResponse, error)
-	CreateNamespace(ctx context.Context, request *abDto.Namespace) (*dto.CommonResponse, error)
-	CreateLayer(ctx context.Context, layer *abDto.Layer) (*dto.CommonResponse, error)
 	SetReadyExperiment(ctx context.Context, request int64) (*dto.CommonResponse, error)
 	SetStopedExperiment(ctx context.Context, request int64) (*dto.CommonResponse, error)
-	CreateCustomParam(ctx context.Context, request *abDto.CreateCustomParamRequest) (*dto.CommonResponse, error)
+
+	CreateFeatureToggle(ctx context.Context, request *abDto.Feature) (*dto.CommonResponse, error)
+	UpdateFeatureToggleRollout(ctx context.Context, request *abDto.UpdateFeature) (*dto.CommonResponse, error)
+	SetFeatureToggleStatus(ctx context.Context, request *abDto.SetFeatureStatus) (*dto.CommonResponse, error)
+	IsFeatureEnabled(ctx context.Context, id int64) (*dto.CommonResponse, error)
+	IsUserInFeature(ctx context.Context, request *abDto.UserFeatureReq) ([]*abDto.FeatureReply, error)
 }
 
 type Service struct {
