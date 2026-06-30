@@ -12,6 +12,8 @@ type abService interface {
 	IsUserInFeature(ctx context.Context, feature *abDto.UserFeatureReq) ([]*abDto.FeatureReply, error)
 	SetFeatureToggleStatus(ctx context.Context, request *abDto.SetFeatureStatus) (*dto.CommonResponse, error)
 	UpdateFeatureToggleRollout(ctx context.Context, request *abDto.UpdateFeature) (*dto.CommonResponse, error)
+	GetFeatureToggleByID(ctx context.Context, id int64) (*abDto.GetFeatureToggleByIDResponse, error)
+	GetFeatureToggles(ctx context.Context) (*abDto.GetFeatureTogglesResponse, error)
 }
 
 type Handler struct {

@@ -111,16 +111,19 @@ type CreateNamespaceRequest struct {
 	Name        string  `json:"name"`
 }
 
-// CustomParam defines model for CustomParam.
-type CustomParam struct {
-	Condition  string `json:"condition"`
-	ParametrId int64  `json:"parametr_id"`
-	Value      string `json:"value"`
-}
-
 // CustomParamGroup defines model for CustomParamGroup.
 type CustomParamGroup struct {
-	CustomParam []CustomParam `json:"custom_param"`
+	ParamsWithConditions []CustomParamWithCondition `json:"params_with_conditions"`
+	Percent              int64                      `json:"percent"`
+}
+
+// CustomParamWithCondition defines model for CustomParamWithCondition.
+type CustomParamWithCondition struct {
+	Condition        string `json:"condition"`
+	Id               *int64 `json:"id,omitempty"`
+	ParameterGroupId *int64 `json:"parameter_group_id,omitempty"`
+	ParameterId      int64  `json:"parameter_id"`
+	Value            string `json:"value"`
 }
 
 // DeleteUsersReply defines model for DeleteUsersReply.
@@ -153,6 +156,7 @@ type ExperimentRequest struct {
 type ExperimentsReply struct {
 	ErrInfoReason    ErrInfoReason     `json:"err_info_reason"`
 	ExperimentsReply []ExperimentReply `json:"experiments_reply"`
+	Message          string            `json:"message"`
 }
 
 // Feature defines model for Feature.
@@ -163,6 +167,146 @@ type Feature struct {
 
 // FeatureToggleStatus defines model for FeatureToggleStatus.
 type FeatureToggleStatus string
+
+// GetCustomParam defines model for GetCustomParam.
+type GetCustomParam struct {
+	Id          int64  `json:"id"`
+	Name        string `json:"name"`
+	NamespaceId int64  `json:"namespace_id"`
+	Type        string `json:"type"`
+}
+
+// GetCustomParamByIDResponse defines model for GetCustomParamByIDResponse.
+type GetCustomParamByIDResponse struct {
+	CustomParam GetCustomParam `json:"custom_param"`
+	Message     string         `json:"message"`
+}
+
+// GetCustomParamWithCondition defines model for GetCustomParamWithCondition.
+type GetCustomParamWithCondition struct {
+	Condition        string `json:"condition"`
+	Id               int64  `json:"id"`
+	ParameterGroupId int64  `json:"parameter_group_id"`
+	ParameterId      int64  `json:"parameter_id"`
+	Value            string `json:"value"`
+}
+
+// GetCustomParamsResponse defines model for GetCustomParamsResponse.
+type GetCustomParamsResponse struct {
+	CustomParams []GetCustomParam `json:"custom_params"`
+	Message      string           `json:"message"`
+}
+
+// GetExperiment defines model for GetExperiment.
+type GetExperiment struct {
+	EndDate           *time.Time      `json:"end_date,omitempty"`
+	ExcludedCities    *[]string       `json:"excluded_cities,omitempty"`
+	ExcludedStores    *[]string       `json:"excluded_stores,omitempty"`
+	Groups            []GetGroup      `json:"groups"`
+	Id                int64           `json:"id"`
+	LayersId          []int64         `json:"layers_id"`
+	Name              string          `json:"name"`
+	Namespace         string          `json:"namespace"`
+	ParamsGroups      []GetParamGroup `json:"params_groups"`
+	PassingCities     *[]string       `json:"passing_cities,omitempty"`
+	PassingStores     *[]string       `json:"passing_stores,omitempty"`
+	RolloutPercentage int64           `json:"rollout_percentage"`
+	StartDate         *time.Time      `json:"start_date,omitempty"`
+	Status            string          `json:"status"`
+}
+
+// GetExperimentByIDResponse defines model for GetExperimentByIDResponse.
+type GetExperimentByIDResponse struct {
+	Experiment GetExperiment `json:"experiment"`
+	Message    string        `json:"message"`
+}
+
+// GetExperimentsResponse defines model for GetExperimentsResponse.
+type GetExperimentsResponse struct {
+	Experiments []GetExperiment `json:"experiments"`
+	Message     string          `json:"message"`
+}
+
+// GetFeatureToggle defines model for GetFeatureToggle.
+type GetFeatureToggle struct {
+	Android           *int64     `json:"android,omitempty"`
+	CreatedAt         time.Time  `json:"created_at"`
+	DeletedAt         *time.Time `json:"deleted_at,omitempty"`
+	Id                int64      `json:"id"`
+	Ios               *int64     `json:"ios,omitempty"`
+	Name              string     `json:"name"`
+	NamespaceId       int64      `json:"namespace_id"`
+	RolloutPercentage *int64     `json:"rollout_percentage,omitempty"`
+	Status            string     `json:"status"`
+	UpdatedAt         *time.Time `json:"updated_at,omitempty"`
+	Web               *int64     `json:"web,omitempty"`
+}
+
+// GetFeatureToggleByIDResponse defines model for GetFeatureToggleByIDResponse.
+type GetFeatureToggleByIDResponse struct {
+	FeatureToggle GetFeatureToggle `json:"feature_toggle"`
+	Message       string           `json:"message"`
+}
+
+// GetFeatureTogglesResponse defines model for GetFeatureTogglesResponse.
+type GetFeatureTogglesResponse struct {
+	FeatureToggles []GetFeatureToggle `json:"feature_toggles"`
+	Message        string             `json:"message"`
+}
+
+// GetGroup defines model for GetGroup.
+type GetGroup struct {
+	DeviceId          []int64 `json:"device_id"`
+	Id                int64   `json:"id"`
+	Name              string  `json:"name"`
+	RollingPercentage int64   `json:"rolling_percentage"`
+}
+
+// GetLayer defines model for GetLayer.
+type GetLayer struct {
+	Description string `json:"description"`
+	Id          int64  `json:"id"`
+	Name        string `json:"name"`
+	NamespaceId int64  `json:"namespace_id"`
+}
+
+// GetLayerByIDResponse defines model for GetLayerByIDResponse.
+type GetLayerByIDResponse struct {
+	Layer   GetLayer `json:"layer"`
+	Message string   `json:"message"`
+}
+
+// GetLayersResponse defines model for GetLayersResponse.
+type GetLayersResponse struct {
+	Layers  []GetLayer `json:"layers"`
+	Message string     `json:"message"`
+}
+
+// GetNamespace defines model for GetNamespace.
+type GetNamespace struct {
+	Description string `json:"description"`
+	Id          int64  `json:"id"`
+	Name        string `json:"name"`
+}
+
+// GetNamespaceByIDResponse defines model for GetNamespaceByIDResponse.
+type GetNamespaceByIDResponse struct {
+	Message   string       `json:"message"`
+	Namespace GetNamespace `json:"namespace"`
+}
+
+// GetNamespacesResponse defines model for GetNamespacesResponse.
+type GetNamespacesResponse struct {
+	Message    string         `json:"message"`
+	Namespaces []GetNamespace `json:"namespaces"`
+}
+
+// GetParamGroup defines model for GetParamGroup.
+type GetParamGroup struct {
+	Id                   int64                         `json:"id"`
+	ParamsWithConditions []GetCustomParamWithCondition `json:"params_with_conditions"`
+	Percent              int64                         `json:"percent"`
+}
 
 // GetUserReply defines model for GetUserReply.
 type GetUserReply struct {
@@ -179,6 +323,7 @@ type GetUsersReply struct {
 // Group defines model for Group.
 type Group struct {
 	DeviceId          *[]int64 `json:"device_id,omitempty"`
+	Id                *int64   `json:"id,omitempty"`
 	Name              string   `json:"name"`
 	RollingPercentage int64    `json:"rolling_percentage"`
 }
@@ -187,6 +332,7 @@ type Group struct {
 type IsUserInFeatureReply struct {
 	ErrInfoReason ErrInfoReason `json:"err_info_reason"`
 	Features      []Feature     `json:"features"`
+	Message       string        `json:"message"`
 }
 
 // IsUserInFeatureRequest defines model for IsUserInFeatureRequest.
@@ -314,9 +460,18 @@ type ServerInterface interface {
 	// Register user
 	// (POST /v1/auth/register)
 	Register(ctx echo.Context) error
+	// Get custom params list
+	// (GET /v1/custom-params)
+	GetCustomParams(ctx echo.Context) error
 	// Create custom parameter
 	// (POST /v1/custom-params)
 	CreateCustomParam(ctx echo.Context) error
+	// Get custom param by id
+	// (GET /v1/custom-params/{id})
+	GetCustomParamByID(ctx echo.Context, id int64) error
+	// Get experiments list
+	// (GET /v1/experiments)
+	GetExperiments(ctx echo.Context) error
 	// Create experiment
 	// (POST /v1/experiments)
 	CreateExperiment(ctx echo.Context) error
@@ -329,6 +484,12 @@ type ServerInterface interface {
 	// Stop experiment
 	// (POST /v1/experiments/{experiment_id}/stopped)
 	SetStoppedExperiment(ctx echo.Context, experimentId int64) error
+	// Get experiment by id
+	// (GET /v1/experiments/{id})
+	GetExperimentByID(ctx echo.Context, id int64) error
+	// Get feature toggles list
+	// (GET /v1/feature-toggles)
+	GetFeatureToggles(ctx echo.Context) error
 	// Create feature toggle
 	// (POST /v1/feature-toggles)
 	CreateFeatureToggle(ctx echo.Context) error
@@ -344,12 +505,27 @@ type ServerInterface interface {
 	// Set feature toggle status
 	// (POST /v1/feature-toggles/{feature_toggle_id}/status)
 	SetFeatureToggleStatus(ctx echo.Context, featureToggleId int64) error
+	// Get feature toggle by id
+	// (GET /v1/feature-toggles/{id})
+	GetFeatureToggleByID(ctx echo.Context, id int64) error
+	// Get layers list
+	// (GET /v1/layers)
+	GetLayers(ctx echo.Context) error
 	// Create layer
 	// (POST /v1/layers)
 	CreateLayer(ctx echo.Context) error
+	// Get layer by id
+	// (GET /v1/layers/{id})
+	GetLayerByID(ctx echo.Context, id int64) error
+	// Get namespaces list
+	// (GET /v1/namespaces)
+	GetNamespaces(ctx echo.Context) error
 	// Create namespace
 	// (POST /v1/namespaces)
 	CreateNamespace(ctx echo.Context) error
+	// Get namespace by id
+	// (GET /v1/namespaces/{id})
+	GetNamespaceByID(ctx echo.Context, id int64) error
 	// Delete current user
 	// (DELETE /v1/users)
 	DeleteUsers(ctx echo.Context) error
@@ -405,12 +581,46 @@ func (w *ServerInterfaceWrapper) Register(ctx echo.Context) error {
 	return err
 }
 
+// GetCustomParams converts echo context to params.
+func (w *ServerInterfaceWrapper) GetCustomParams(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetCustomParams(ctx)
+	return err
+}
+
 // CreateCustomParam converts echo context to params.
 func (w *ServerInterfaceWrapper) CreateCustomParam(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.CreateCustomParam(ctx)
+	return err
+}
+
+// GetCustomParamByID converts echo context to params.
+func (w *ServerInterfaceWrapper) GetCustomParamByID(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetCustomParamByID(ctx, id)
+	return err
+}
+
+// GetExperiments converts echo context to params.
+func (w *ServerInterfaceWrapper) GetExperiments(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetExperiments(ctx)
 	return err
 }
 
@@ -461,6 +671,31 @@ func (w *ServerInterfaceWrapper) SetStoppedExperiment(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.SetStoppedExperiment(ctx, experimentId)
+	return err
+}
+
+// GetExperimentByID converts echo context to params.
+func (w *ServerInterfaceWrapper) GetExperimentByID(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetExperimentByID(ctx, id)
+	return err
+}
+
+// GetFeatureToggles converts echo context to params.
+func (w *ServerInterfaceWrapper) GetFeatureToggles(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetFeatureToggles(ctx)
 	return err
 }
 
@@ -530,6 +765,31 @@ func (w *ServerInterfaceWrapper) SetFeatureToggleStatus(ctx echo.Context) error 
 	return err
 }
 
+// GetFeatureToggleByID converts echo context to params.
+func (w *ServerInterfaceWrapper) GetFeatureToggleByID(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetFeatureToggleByID(ctx, id)
+	return err
+}
+
+// GetLayers converts echo context to params.
+func (w *ServerInterfaceWrapper) GetLayers(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetLayers(ctx)
+	return err
+}
+
 // CreateLayer converts echo context to params.
 func (w *ServerInterfaceWrapper) CreateLayer(ctx echo.Context) error {
 	var err error
@@ -539,12 +799,53 @@ func (w *ServerInterfaceWrapper) CreateLayer(ctx echo.Context) error {
 	return err
 }
 
+// GetLayerByID converts echo context to params.
+func (w *ServerInterfaceWrapper) GetLayerByID(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetLayerByID(ctx, id)
+	return err
+}
+
+// GetNamespaces converts echo context to params.
+func (w *ServerInterfaceWrapper) GetNamespaces(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetNamespaces(ctx)
+	return err
+}
+
 // CreateNamespace converts echo context to params.
 func (w *ServerInterfaceWrapper) CreateNamespace(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.CreateNamespace(ctx)
+	return err
+}
+
+// GetNamespaceByID converts echo context to params.
+func (w *ServerInterfaceWrapper) GetNamespaceByID(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetNamespaceByID(ctx, id)
 	return err
 }
 
@@ -635,18 +936,28 @@ func RegisterHandlersWithOptions(router EchoRouter, si ServerInterface, options 
 	router.POST(options.BaseURL+"/v1/auth/logout", wrapper.Logout, options.OperationMiddlewares["Logout"]...)
 	router.POST(options.BaseURL+"/v1/auth/refresh", wrapper.Refresh, options.OperationMiddlewares["Refresh"]...)
 	router.POST(options.BaseURL+"/v1/auth/register", wrapper.Register, options.OperationMiddlewares["Register"]...)
+	router.GET(options.BaseURL+"/v1/custom-params", wrapper.GetCustomParams, options.OperationMiddlewares["GetCustomParams"]...)
 	router.POST(options.BaseURL+"/v1/custom-params", wrapper.CreateCustomParam, options.OperationMiddlewares["CreateCustomParam"]...)
+	router.GET(options.BaseURL+"/v1/custom-params/:id", wrapper.GetCustomParamByID, options.OperationMiddlewares["GetCustomParamByID"]...)
+	router.GET(options.BaseURL+"/v1/experiments", wrapper.GetExperiments, options.OperationMiddlewares["GetExperiments"]...)
 	router.POST(options.BaseURL+"/v1/experiments", wrapper.CreateExperiment, options.OperationMiddlewares["CreateExperiment"]...)
 	router.POST(options.BaseURL+"/v1/experiments/user", wrapper.UserExperiment, options.OperationMiddlewares["UserExperiment"]...)
 	router.POST(options.BaseURL+"/v1/experiments/:experiment_id/ready", wrapper.SetReadyExperiment, options.OperationMiddlewares["SetReadyExperiment"]...)
 	router.POST(options.BaseURL+"/v1/experiments/:experiment_id/stopped", wrapper.SetStoppedExperiment, options.OperationMiddlewares["SetStoppedExperiment"]...)
+	router.GET(options.BaseURL+"/v1/experiments/:id", wrapper.GetExperimentByID, options.OperationMiddlewares["GetExperimentByID"]...)
+	router.GET(options.BaseURL+"/v1/feature-toggles", wrapper.GetFeatureToggles, options.OperationMiddlewares["GetFeatureToggles"]...)
 	router.POST(options.BaseURL+"/v1/feature-toggles", wrapper.CreateFeatureToggle, options.OperationMiddlewares["CreateFeatureToggle"]...)
 	router.POST(options.BaseURL+"/v1/feature-toggles/user", wrapper.IsUserInFeature, options.OperationMiddlewares["IsUserInFeature"]...)
 	router.GET(options.BaseURL+"/v1/feature-toggles/:feature_toggle_id/enabled", wrapper.IsFeatureEnabled, options.OperationMiddlewares["IsFeatureEnabled"]...)
 	router.PATCH(options.BaseURL+"/v1/feature-toggles/:feature_toggle_id/rollout", wrapper.UpdateFeatureToggleRollout, options.OperationMiddlewares["UpdateFeatureToggleRollout"]...)
 	router.POST(options.BaseURL+"/v1/feature-toggles/:feature_toggle_id/status", wrapper.SetFeatureToggleStatus, options.OperationMiddlewares["SetFeatureToggleStatus"]...)
+	router.GET(options.BaseURL+"/v1/feature-toggles/:id", wrapper.GetFeatureToggleByID, options.OperationMiddlewares["GetFeatureToggleByID"]...)
+	router.GET(options.BaseURL+"/v1/layers", wrapper.GetLayers, options.OperationMiddlewares["GetLayers"]...)
 	router.POST(options.BaseURL+"/v1/layers", wrapper.CreateLayer, options.OperationMiddlewares["CreateLayer"]...)
+	router.GET(options.BaseURL+"/v1/layers/:id", wrapper.GetLayerByID, options.OperationMiddlewares["GetLayerByID"]...)
+	router.GET(options.BaseURL+"/v1/namespaces", wrapper.GetNamespaces, options.OperationMiddlewares["GetNamespaces"]...)
 	router.POST(options.BaseURL+"/v1/namespaces", wrapper.CreateNamespace, options.OperationMiddlewares["CreateNamespace"]...)
+	router.GET(options.BaseURL+"/v1/namespaces/:id", wrapper.GetNamespaceByID, options.OperationMiddlewares["GetNamespaceByID"]...)
 	router.DELETE(options.BaseURL+"/v1/users", wrapper.DeleteUsers, options.OperationMiddlewares["DeleteUsers"]...)
 	router.GET(options.BaseURL+"/v1/users", wrapper.GetUsersList, options.OperationMiddlewares["GetUsersList"]...)
 	router.PATCH(options.BaseURL+"/v1/users", wrapper.UpdateUsers, options.OperationMiddlewares["UpdateUsers"]...)

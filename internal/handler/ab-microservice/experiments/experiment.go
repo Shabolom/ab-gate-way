@@ -11,6 +11,8 @@ type abService interface {
 	SetStopedExperiment(ctx context.Context, experimentID int64) (*dto.CommonResponse, error)
 	SetReadyExperiment(ctx context.Context, experimentID int64) (*dto.CommonResponse, error)
 	UserExperiment(ctx context.Context, request *abDto.UserExperimentRequest) (*abDto.ExperimentsReply, error)
+	GetExperimentByID(ctx context.Context, id int64) (*abDto.GetExperimentByIDResponse, error)
+	GetExperiments(ctx context.Context) (*abDto.GetExperimentsResponse, error)
 }
 
 type Handler struct {
