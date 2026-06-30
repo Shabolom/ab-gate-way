@@ -25,6 +25,17 @@ type abAdapter interface {
 	SetFeatureToggleStatus(ctx context.Context, request *abDto.SetFeatureStatus) (*dto.CommonResponse, error)
 	IsFeatureEnabled(ctx context.Context, id int64) (*dto.CommonResponse, error)
 	IsUserInFeature(ctx context.Context, request *abDto.UserFeatureReq) ([]*abDto.FeatureReply, error)
+
+	GetExperimentByID(ctx context.Context, id int64) (*abDto.GetExperimentByIDResponse, error)
+	GetNamespaceByID(ctx context.Context, id int64) (*abDto.GetNamespaceByIDResponse, error)
+	GetLayerByID(ctx context.Context, id int64) (*abDto.GetLayerByIDResponse, error)
+	GetCustomParamByID(ctx context.Context, id int64) (*abDto.GetCustomParamByIDResponse, error)
+	GetFeatureToggleByID(ctx context.Context, id int64) (*abDto.GetFeatureToggleByIDResponse, error)
+	GetExperiments(ctx context.Context) (*abDto.GetExperimentsResponse, error)
+	GetNamespaces(ctx context.Context) (*abDto.GetNamespacesResponse, error)
+	GetLayers(ctx context.Context) (*abDto.GetLayersResponse, error)
+	GetCustomParams(ctx context.Context) (*abDto.GetCustomParamsResponse, error)
+	GetFeatureToggles(ctx context.Context) (*abDto.GetFeatureTogglesResponse, error)
 }
 
 type Service struct {
