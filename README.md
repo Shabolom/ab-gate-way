@@ -180,19 +180,3 @@ PATCH /v1/feature-toggles/{feature_toggle_id}/rollout
 POST  /v1/feature-toggles/{feature_toggle_id}/status
 GET   /v1/feature-toggles/{feature_toggle_id}/enabled
 POST  /v1/feature-toggles/user
-```
-
-## Для админки
-
-Админка должна общаться только с gateway.
-
-Рекомендуемый frontend stack:
-
-* Vue 3
-* TypeScript
-* Element Plus
-* Pinia
-* Vue Router
-* Axios
-
-Gateway является единой HTTP-точкой входа и скрывает внутренние gRPC-вызовы.
