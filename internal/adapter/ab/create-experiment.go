@@ -2,7 +2,6 @@ package abAdapter
 
 import (
 	"context"
-	"fmt"
 	authv1 "gate-way/gen/proto"
 	"gate-way/internal/dto"
 	abDto "gate-way/internal/dto/ab-dto"
@@ -32,21 +31,20 @@ func (a *Adapter) CreateExperiment(ctx context.Context, request *abDto.CreateExp
 	}
 
 	for _, customParamGroup := range request.CustomParamGroups {
-		var customParams []*authv1.CustomParam
+		var customParams []*authv1.CustomParamWithCondition
 
 		for _, customParam := range customParamGroup.CustomParam {
-			customParamData := &authv1.CustomParam{
-				ParametrId: customParam.ParamID,
-				Condition:  customParam.Condition,
-				Value:      customParam.Value,
+			customParamData := &authv1.CustomParamWithCondition{
+				ParameterId: customParam.ParamID,
+				Value:       customParam.Value,
+				Condition:   customParam.Condition,
 			}
 			customParams = append(customParams, customParamData)
-			fmt.Println(customParamData, 4444, customParam.ParamID, 123)
 		}
 
 		requestBody.CustomParamGroups = append(requestBody.CustomParamGroups, &authv1.CustomParamGroup{
-			Percentage:  customParamGroup.Percentage,
-			CustomParam: customParams,
+			Percent:              customParamGroup.Percentage,
+			ParamsWithConditions: customParams,
 		})
 	}
 

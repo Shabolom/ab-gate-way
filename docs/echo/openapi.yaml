@@ -182,6 +182,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/StockReply'
 
+    get:
+      operationId: GetExperiments
+      tags:
+        - experiments
+      summary: Get experiments list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetExperimentsResponse'
   /v1/namespaces:
     post:
       operationId: CreateNamespace
@@ -201,6 +213,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/StockReply'
 
+    get:
+      operationId: GetNamespaces
+      tags:
+        - namespaces
+      summary: Get namespaces list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetNamespacesResponse'
   /v1/layers:
     post:
       operationId: CreateLayer
@@ -220,6 +244,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/StockReply'
 
+    get:
+      operationId: GetLayers
+      tags:
+        - layers
+      summary: Get layers list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLayersResponse'
   /v1/experiments/{experiment_id}/ready:
     post:
       operationId: SetReadyExperiment
@@ -280,6 +316,18 @@ paths:
                 $ref: '#/components/schemas/StockReply'
 
 
+    get:
+      operationId: GetCustomParams
+      tags:
+        - custom-params
+      summary: Get custom params list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCustomParamsResponse'
   /v1/feature-toggles:
     post:
       operationId: CreateFeatureToggle
@@ -299,6 +347,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/StockReply'
 
+    get:
+      operationId: GetFeatureToggles
+      tags:
+        - feature-toggles
+      summary: Get feature toggles list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFeatureTogglesResponse'
   /v1/feature-toggles/{feature_toggle_id}/rollout:
     patch:
       operationId: UpdateFeatureToggleRollout
@@ -390,6 +450,106 @@ paths:
               schema:
                 $ref: '#/components/schemas/IsUserInFeatureReply'
 
+  /v1/experiments/{id}:
+    get:
+      operationId: GetExperimentByID
+      tags:
+        - experiments
+      summary: Get experiment by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetExperimentByIDResponse'
+  /v1/namespaces/{id}:
+    get:
+      operationId: GetNamespaceByID
+      tags:
+        - namespaces
+      summary: Get namespace by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetNamespaceByIDResponse'
+  /v1/layers/{id}:
+    get:
+      operationId: GetLayerByID
+      tags:
+        - layers
+      summary: Get layer by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLayerByIDResponse'
+  /v1/custom-params/{id}:
+    get:
+      operationId: GetCustomParamByID
+      tags:
+        - custom-params
+      summary: Get custom param by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCustomParamByIDResponse'
+  /v1/feature-toggles/{id}:
+    get:
+      operationId: GetFeatureToggleByID
+      tags:
+        - feature-toggles
+      summary: Get feature toggle by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFeatureToggleByIDResponse'
 components:
   schemas:
     ErrInfoReason:
@@ -641,13 +801,17 @@ components:
     CustomParamGroup:
       type: object
       required:
-        - custom_param
+        - percent
+        - params_with_conditions
       properties:
-        custom_param:
+        percent:
+          type: integer
+          format: int64
+          example: 50
+        params_with_conditions:
           type: array
           items:
-            $ref: '#/components/schemas/CustomParam'
-
+            $ref: '#/components/schemas/CustomParamWithCondition'
     CustomParam:
       type: object
       required:
@@ -674,6 +838,10 @@ components:
         - name
         - rolling_percentage
       properties:
+        id:
+          type: integer
+          format: int64
+          example: 0
         name:
           type: string
           example: test_gate_way_group_1
@@ -771,9 +939,12 @@ components:
       required:
         - err_info_reason
         - experiments_reply
+        - message
       properties:
         err_info_reason:
           $ref: '#/components/schemas/ErrInfoReason'
+        message:
+          type: string
         experiments_reply:
           type: array
           items:
@@ -895,9 +1066,12 @@ components:
       required:
         - err_info_reason
         - features
+        - message
       properties:
         err_info_reason:
           $ref: '#/components/schemas/ErrInfoReason'
+        message:
+          type: string
         features:
           type: array
           items:
@@ -917,3 +1091,355 @@ components:
           type: string
           example: new_checkout
 
+    GetExperimentByIDResponse:
+      type: object
+      required:
+        - message
+        - experiment
+      properties:
+        message:
+          type: string
+        experiment:
+          $ref: '#/components/schemas/GetExperiment'
+    GetNamespaceByIDResponse:
+      type: object
+      required:
+        - message
+        - namespace
+      properties:
+        message:
+          type: string
+        namespace:
+          $ref: '#/components/schemas/GetNamespace'
+    GetLayerByIDResponse:
+      type: object
+      required:
+        - message
+        - layer
+      properties:
+        message:
+          type: string
+        layer:
+          $ref: '#/components/schemas/GetLayer'
+    GetCustomParamByIDResponse:
+      type: object
+      required:
+        - message
+        - custom_param
+      properties:
+        message:
+          type: string
+        custom_param:
+          $ref: '#/components/schemas/GetCustomParam'
+    GetFeatureToggleByIDResponse:
+      type: object
+      required:
+        - message
+        - feature_toggle
+      properties:
+        message:
+          type: string
+        feature_toggle:
+          $ref: '#/components/schemas/GetFeatureToggle'
+    GetExperimentsResponse:
+      type: object
+      required:
+        - message
+        - experiments
+      properties:
+        message:
+          type: string
+        experiments:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetExperiment'
+    GetNamespacesResponse:
+      type: object
+      required:
+        - message
+        - namespaces
+      properties:
+        message:
+          type: string
+        namespaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetNamespace'
+    GetLayersResponse:
+      type: object
+      required:
+        - message
+        - layers
+      properties:
+        message:
+          type: string
+        layers:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetLayer'
+    GetCustomParamsResponse:
+      type: object
+      required:
+        - message
+        - custom_params
+      properties:
+        message:
+          type: string
+        custom_params:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetCustomParam'
+    GetFeatureTogglesResponse:
+      type: object
+      required:
+        - message
+        - feature_toggles
+      properties:
+        message:
+          type: string
+        feature_toggles:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetFeatureToggle'
+    GetExperiment:
+      type: object
+      required:
+        - id
+        - name
+        - namespace
+        - status
+        - rollout_percentage
+        - layers_id
+        - params_groups
+        - groups
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        namespace:
+          type: string
+        status:
+          type: string
+        rollout_percentage:
+          type: integer
+          format: int64
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        passing_cities:
+          type: array
+          items:
+            type: string
+        excluded_cities:
+          type: array
+          items:
+            type: string
+        passing_stores:
+          type: array
+          items:
+            type: string
+        excluded_stores:
+          type: array
+          items:
+            type: string
+        layers_id:
+          type: array
+          items:
+            type: integer
+            format: int64
+        params_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetParamGroup'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetGroup'
+    GetNamespace:
+      type: object
+      required:
+        - id
+        - name
+        - description
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+    GetLayer:
+      type: object
+      required:
+        - id
+        - namespace_id
+        - name
+        - description
+      properties:
+        id:
+          type: integer
+          format: int64
+        namespace_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+    GetCustomParam:
+      type: object
+      required:
+        - id
+        - namespace_id
+        - name
+        - type
+      properties:
+        id:
+          type: integer
+          format: int64
+        namespace_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          type: string
+    GetFeatureToggle:
+      type: object
+      required:
+        - id
+        - namespace_id
+        - name
+        - status
+        - created_at
+      properties:
+        id:
+          type: integer
+          format: int64
+        namespace_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        status:
+          type: string
+        rollout_percentage:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+        ios:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+        android:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+        web:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 100
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+    GetParamGroup:
+      type: object
+      required:
+        - id
+        - percent
+        - params_with_conditions
+      properties:
+        id:
+          type: integer
+          format: int64
+        percent:
+          type: integer
+          format: int64
+        params_with_conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetCustomParamWithCondition'
+    GetCustomParamWithCondition:
+      type: object
+      required:
+        - id
+        - parameter_id
+        - parameter_group_id
+        - value
+        - condition
+      properties:
+        id:
+          type: integer
+          format: int64
+        parameter_id:
+          type: integer
+          format: int64
+        parameter_group_id:
+          type: integer
+          format: int64
+        value:
+          type: string
+        condition:
+          type: string
+    GetGroup:
+      type: object
+      required:
+        - id
+        - name
+        - rolling_percentage
+        - device_id
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        rolling_percentage:
+          type: integer
+          format: int64
+        device_id:
+          type: array
+          items:
+            type: integer
+            format: int64
+    CustomParamWithCondition:
+      type: object
+      required:
+        - parameter_id
+        - value
+        - condition
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 0
+        parameter_id:
+          type: integer
+          format: int64
+          example: 8
+        parameter_group_id:
+          type: integer
+          format: int64
+          example: 0
+        value:
+          type: string
+          example: '10'
+        condition:
+          type: string
+          example: '='

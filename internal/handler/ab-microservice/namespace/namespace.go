@@ -8,6 +8,8 @@ import (
 
 type abService interface {
 	CreateNamespace(ctx context.Context, request *abDto.Namespace) (*dto.CommonResponse, error)
+	GetNamespaces(ctx context.Context) (*abDto.GetNamespacesResponse, error)
+	GetNamespaceByID(ctx context.Context, id int64) (*abDto.GetNamespaceByIDResponse, error)
 }
 
 type Handler struct {

@@ -69,7 +69,7 @@ func (d *DI) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 				zap.Error(err),
 			)
 
-			return render.FromError(c, err)
+			return render.FromError(c, shortcut.ErrInvalidAccessToken)
 		}
 
 		c.SetRequest(c.Request().WithContext(ctx))

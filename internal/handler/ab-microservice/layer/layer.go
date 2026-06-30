@@ -8,6 +8,8 @@ import (
 
 type abService interface {
 	CreateLayer(ctx context.Context, request *abDto.Layer) (*dto.CommonResponse, error)
+	GetLayerByID(ctx context.Context, id int64) (*abDto.GetLayerByIDResponse, error)
+	GetLayers(ctx context.Context) (*abDto.GetLayersResponse, error)
 }
 
 type Handler struct {
